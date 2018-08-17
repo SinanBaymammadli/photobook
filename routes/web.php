@@ -26,13 +26,10 @@ Route::group(["prefix" => "admin"], function () {
         Route::post('password/reset', 'Auth\ResetPasswordController@reset');
     });
 
-    Route::group(["middleware" => "auth, admin"], function () {
+    Route::group(["middleware" => "auth"], function () {
         Route::post('logout', 'Auth\LoginController@logout')->name('logout');
         Route::resource('user', 'UserController');
+        Route::get('/home', 'HomeController@index')->name('home');
     });
 
 });
-
-// Auth::routes();
-
-// Route::get('/home', 'HomeController@index')->name('home');
