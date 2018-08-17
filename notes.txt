@@ -1,0 +1,2 @@
+- add register for api
+- cant login as user from api
