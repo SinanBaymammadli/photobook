@@ -29,6 +29,7 @@ Route::group(["prefix" => "admin"], function () {
     Route::group(["middleware" => "admin"], function () {
         Route::post('logout', 'Auth\LoginController@logout')->name('logout');
         Route::resource('user', 'UserController');
+        Route::get('user/{id}/download', 'UserController@downloadAllPhotosAsZip')->name('photo.download');
         Route::get('/home', 'HomeController@index')->name('home');
     });
 
