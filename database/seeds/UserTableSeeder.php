@@ -19,5 +19,7 @@ class UserTableSeeder extends Seeder
             'is_admin' => false,
             'remember_token' => str_random(60),
         ]);
+
+        factory(App\User::class, 50)->create();
     }
 }
