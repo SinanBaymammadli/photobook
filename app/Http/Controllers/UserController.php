@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::with('photos')->paginate(20);
 
         return view("admin.user.index", ["users" => $users]);
     }
@@ -48,7 +48,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::with('photos')->findOrFail($id);
+
+        return view("admin.user.show", ["user" => $user]);
     }
 
     /**

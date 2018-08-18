@@ -16,3 +16,11 @@ mix
   .js("resources/js/user.js", "public/js")
   .sass("resources/sass/admin.scss", "public/css")
   .sass("resources/sass/user.scss", "public/css");
+
+if (mix.inProduction()) {
+  mix.version();
+}
+
+if (!mix.inProduction()) {
+  mix.sourceMaps();
+}

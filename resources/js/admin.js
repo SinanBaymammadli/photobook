@@ -57,3 +57,4 @@ if (token) {
 // });
 
 ///// Other imports
+import "./components/data-tables";

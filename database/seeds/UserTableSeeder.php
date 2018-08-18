@@ -20,6 +20,10 @@ class UserTableSeeder extends Seeder
             'remember_token' => str_random(60),
         ]);
 
-        factory(App\User::class, 50)->create();
+        factory(App\User::class, 15)->create()->each(function ($u) {
+            for ($i = 0; $i < 40; $i++) {
+                $u->photos()->save(factory(App\Photo::class)->make());
+            }
+        });
     }
 }
