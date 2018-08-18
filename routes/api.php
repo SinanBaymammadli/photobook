@@ -16,4 +16,6 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth', 'guard' => 'api'], func
     Route::post('logout', 'API\AuthController@logout');
     Route::post('refresh', 'API\AuthController@refresh');
     Route::post('me', 'API\AuthController@me');
+    // register
+    Route::post('register', 'Auth\RegisterController@register');
 });
