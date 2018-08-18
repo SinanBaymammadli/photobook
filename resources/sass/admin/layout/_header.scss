@@ -1,7 +1,8 @@
 // -----------------------------------------------------------------------------
 // This file contains all styles related to the header of the site/application.
 // -----------------------------------------------------------------------------
-.navbar-laravel {
-  background-color: #fff;
+.header {
+  background-color: rgba(250, 250, 250, 0.9);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  left: $side-menu-width;
 }

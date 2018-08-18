@@ -67,3 +67,7 @@ $breakpoints: (
 /// @example scss - When using a CDN
 ///   $base-url: 'http://cdn.example.com/assets/';
 $base-url: "/assets/" !default;
+
+//
+$side-menu-width: 250px;
+$header-height: 55px;

@@ -1,0 +1,9 @@
+.app {
+  display: grid;
+  grid-template-columns: $side-menu-width 1fr;
+}
+
+.main {
+  padding-top: $header-height;
+  min-height: 200vh;
+}

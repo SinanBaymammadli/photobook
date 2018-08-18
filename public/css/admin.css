@@ -10583,9 +10583,28 @@ body {
   width: 1px;
 }
 
-.navbar-laravel {
-  background-color: #fff;
+.header {
+  background-color: rgba(250, 250, 250, 0.9);
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  left: 250px;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+
+.main {
+  padding-top: 55px;
+  min-height: 200vh;
+}
+
+.side-menu {
+  background-color: pink;
+  position: fixed;
+  height: 100%;
+  width: 250px;
+  background: linear-gradient(45deg, #353d47 0, #21292e 100%);
 }
 

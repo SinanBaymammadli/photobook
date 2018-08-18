@@ -11,6 +11,8 @@
 
 // 4. Layout-related sections
 @import "layout/header", "layout/footer";
+@import "layout/main";
+@import "layout/side-menu";
 
 // 5. Components
 @import "components/button";
