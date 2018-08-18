@@ -1,0 +1,10 @@
+.side-menu-item {
+  color: #76838f;
+  font-size: 16px;
+  padding: 13px 10px;
+
+  @include on-event {
+    color: #ffffff;
+    background-color: #2a363b;
+  }
+}
