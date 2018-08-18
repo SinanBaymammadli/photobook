@@ -1,10 +1,40 @@
+.side-menu-logo {
+  display: flex;
+  align-items: center;
+  height: $header-height;
+  background-color: #22a7f0;
+  color: #ffffff;
+  font-size: 20px;
+
+  @include on-event {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .far {
+    margin: 0 10px;
+    width: 38px;
+    text-align: center;
+  }
+}
+
 .side-menu-item {
   color: #76838f;
   font-size: 16px;
-  padding: 13px 10px;
+  padding: 13px 0;
 
   @include on-event {
     color: #ffffff;
     background-color: #2a363b;
+  }
+
+  &.active {
+    color: #ffffff;
+  }
+
+  .far {
+    margin: 0 10px;
+    width: 38px;
+    text-align: center;
   }
 }
