@@ -32,5 +32,7 @@
             </main>
         </div>
     </div>
+
+    @yield('extra')
 </body>
 </html>

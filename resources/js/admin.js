@@ -58,3 +58,4 @@ if (token) {
 
 ///// Other imports
 import "./components/data-tables";
+import "./components/delete-user-modal";

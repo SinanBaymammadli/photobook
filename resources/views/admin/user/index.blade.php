@@ -20,7 +20,7 @@
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->photos->count() }}</td>
                         <td>
-                            <button class="btn btn-sm btn-danger">
+                            <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">
                                 <i class="far fa-trash-alt"></i>Delete
                             </button>
                             <a class="btn btn-sm btn-warning" href="{{ route('user.edit', ['id' => $user->id]) }}">
@@ -34,5 +34,32 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
+@endsection
+
+@section('extra')
+    <!-- Delete User Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form action="{{ route('user.destroy', ['id' => 0]) }}" method="post" id="deleteUserForm">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

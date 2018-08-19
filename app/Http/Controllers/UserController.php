@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('photos')->paginate(20);
+        $users = User::with('photos')->get();
 
         return view("admin.user.index", ["users" => $users]);
     }
@@ -63,7 +63,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        return view("admin.user.edit", ["user" => $user]);
     }
 
     /**
@@ -86,7 +88,9 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+        return redirect()->route('user.index');
     }
 
     public function downloadAllPhotosAsZip($id)
