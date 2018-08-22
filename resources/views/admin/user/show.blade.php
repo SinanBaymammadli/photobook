@@ -5,10 +5,12 @@
         <a class="btn btn-primary" href="{{ route('photo.download', ['id' => $user->id]) }}">
             Download All Photos
         </a>
-        <ul>
-            @foreach($user->photos as $photo)
-                <li>{{ $photo->url }}</li>
+        <div>
+            @foreach($photoDates as $photoDate)
+                <a class="border p-3 m-2 d-inline-block text-white bg-secondary" href="{{ route('photo.byDate', ['id' => $user->id, 'date' => $photoDate->created_at->toDateString()]) }}">
+                    {{ $photoDate->created_at->format('F Y') }}
+                </a>
             @endforeach
-        </ul>
+        </div>
     </div>
 @endsection

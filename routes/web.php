@@ -29,8 +29,12 @@ Route::group(["prefix" => "admin"], function () {
     Route::group(["middleware" => "admin"], function () {
         Route::post('logout', 'Auth\LoginController@logout')->name('logout');
         Route::resource('user', 'UserController');
-        Route::get('user/{id}/download', 'UserController@downloadAllPhotosAsZip')->name('photo.download');
         Route::get('/home', 'HomeController@index')->name('home');
+
+        // photos
+        Route::get('user/{id}/download', 'UserController@downloadAllPhotosAsZip')->name('photo.download');
+        Route::get('user/{id}/download/{date}', 'UserController@downloadPhotosByDateAsZip')->name('photo.downloadByDate');
+        Route::get('user/{id}/photos/{date}', 'UserController@showPhotosByDate')->name('photo.byDate');
     });
 
 });

@@ -41,7 +41,7 @@ class PhotoController extends Controller
                 'image/svg+xml',
             ];
             foreach ($request->file as $request_file) {
-                $file = $request_file->store("photos/" . $user_id . Carbon::now()->format("/dFY"), $filesystem);
+                $file = $request_file->store("photos/" . $user_id . "/" . Carbon::now()->toDateString(), $filesystem);
                 if (in_array($request_file->getMimeType(), $allowedImageMimeTypes)) {
                     $image = Image::make($realPath . $file);
                     $image->orientate()->save($realPath . $file);

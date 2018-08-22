@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Photo;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Zipper;
 
 class UserController extends Controller
@@ -49,9 +51,19 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::with('photos')->findOrFail($id);
+        $user = User::findOrFail($id);
+        $photoDates = Photo::select("created_at")
+            ->where("user_id", $id)
+            ->get()
+            ->unique(function ($photoDate) {
+                return Carbon::parse($photoDate->created_at)->format('d'); // grouping by days
+                // return Carbon::parse($date->created_at)->format('Y'); // grouping by years
+                // return Carbon::parse($date->created_at)->format('m'); // grouping by months
+            });
 
-        return view("admin.user.show", ["user" => $user]);
+        //dd($photoDates);
+
+        return view("admin.user.show", ["user" => $user, "photoDates" => $photoDates]);
     }
 
     /**
@@ -92,14 +104,10 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
-    public function downloadAllPhotosAsZip($id)
+    public function downloadAllPhotosAsZip($userId)
     {
-        // get user photo urls
-        $user = User::with('photos')->findOrFail($id);
-        $photos = $user->photos;
-
         // create a list of files that should be added to the archive.
-        $files = glob(storage_path("app/public/photos/" . $user->id . "/*/*"));
+        $files = glob(storage_path("app/public/photos/" . $userId . "/*/*"));
 
         $zipper = new Zipper;
 
@@ -108,5 +116,29 @@ class UserController extends Controller
         Zipper::make($archiveFile)->add($files)->close();
 
         return response()->download($archiveFile)->deleteFileAfterSend(true);
+    }
+
+    public function downloadPhotosByDateAsZip($userId, $date)
+    {
+        // create a list of files that should be added to the archive.
+        $files = glob(storage_path("app/public/photos/" . $userId . "/" . $date . "/*"));
+
+        $zipper = new Zipper;
+
+        $archiveFile = "downloads/photos.zip";
+
+        Zipper::make($archiveFile)->add($files)->close();
+
+        return response()->download($archiveFile)->deleteFileAfterSend(true);
+    }
+
+    public function showPhotosByDate($userId, $date)
+    {
+        $user = User::findOrFail($userId);
+        $photos = Photo::where("user_id", $userId)
+            ->whereDate("created_at", $date)
+            ->get();
+
+        return view("admin.photo.bydate", ["user" => $user, "photos" => $photos, "date" => $date]);
     }
 }
