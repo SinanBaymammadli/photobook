@@ -7,11 +7,15 @@ use App\Photo;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 use Image;
 use Storage;
 
 class PhotoController extends Controller
 {
+    protected $MAX_UPLOADABLE_PHOTO_COUNT = 100;
+    protected $MIN_UPLOADABLE_PHOTO_COUNT = 2;
+
     /**
      * Display a listing of the resource.
      *
@@ -22,6 +26,14 @@ class PhotoController extends Controller
         //
     }
 
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            "file" => "required|array|max:" . $this->MAX_UPLOADABLE_PHOTO_COUNT . "|min:" . $this->MIN_UPLOADABLE_PHOTO_COUNT,
+            "file.*" => "required|image",
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -30,6 +42,8 @@ class PhotoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validator($request->all())->validate();
+
         try {
             $filesystem = "public";
             $realPath = Storage::disk($filesystem)->getDriver()->getAdapter()->getPathPrefix();

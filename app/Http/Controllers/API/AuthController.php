@@ -5,6 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @resource Authentication
+ */
+
 class AuthController extends Controller
 {
     /**
@@ -20,7 +24,11 @@ class AuthController extends Controller
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @header Token
+     *
+     * @response {
+     * access_token: "asdasd"
+     * }
      */
     public function login()
     {
