@@ -26,7 +26,10 @@ class AdminMiddleware
             } else {
                 Auth::logout();
                 // error message
-                return redirect($adminLoginUrl);
+                return redirect($adminLoginUrl)
+                    ->withErrors([
+                        "email" => trans('auth.failed'),
+                    ]);
             }
         }
 

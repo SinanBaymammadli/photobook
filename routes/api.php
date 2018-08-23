@@ -20,6 +20,7 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
         Route::post('me', 'API\AuthController@me');
         // register
         Route::post('register', 'Auth\RegisterController@register');
+        Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
     });
 
     Route::apiResource('photo', 'API\PhotoController');
