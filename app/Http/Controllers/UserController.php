@@ -104,11 +104,8 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
-    public function downloadAllPhotosAsZip($userId)
+    public function downloadFilesAsZip($files)
     {
-        // create a list of files that should be added to the archive.
-        $files = glob(storage_path("app/public/photos/" . $userId . "/*/*"));
-
         $zipper = new Zipper;
 
         $archiveFile = "downloads/photos.zip";
@@ -118,18 +115,32 @@ class UserController extends Controller
         return response()->download($archiveFile)->deleteFileAfterSend(true);
     }
 
-    public function downloadPhotosByDateAsZip($userId, $date)
+    public function downloadAllPhotosAsZip($userId)
     {
         // create a list of files that should be added to the archive.
-        $files = glob(storage_path("app/public/photos/" . $userId . "/" . $date . "/*"));
+        $photos = Photo::where("user_id", $userId)
+            ->get();
+        $photosArray = [];
 
-        $zipper = new Zipper;
+        foreach ($photos as $photo) {
+            array_push($photosArray, storage_path("app/public/" . $photo->url));
+        }
 
-        $archiveFile = "downloads/photos.zip";
+        return $this->downloadFilesAsZip($photosArray);
+    }
 
-        Zipper::make($archiveFile)->add($files)->close();
+    public function downloadPhotosByDateAsZip($userId, $date)
+    {
+        $photos = Photo::where("user_id", $userId)
+            ->whereDate("created_at", $date)
+            ->get();
+        $photosArray = [];
 
-        return response()->download($archiveFile)->deleteFileAfterSend(true);
+        foreach ($photos as $photo) {
+            array_push($photosArray, storage_path("app/public/" . $photo->url));
+        }
+
+        return $this->downloadFilesAsZip($photosArray);
     }
 
     public function showPhotosByDate($userId, $date)
