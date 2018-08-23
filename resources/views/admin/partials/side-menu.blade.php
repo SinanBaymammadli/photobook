@@ -10,7 +10,7 @@
                 <i class="far fa-sun"></i>
                 <span>Dashboard</span>
             </a>
-            <a class="side-menu-item nav-link {{ Route::currentRouteName() == 'user.index' ? 'active' : null }}"
+            <a class="side-menu-item nav-link {{ str_contains(Route::currentRouteName(), 'user') ? 'active' : null }}"
                 href="{{ route('user.index') }}">
                 <i class="far fa-user"></i>
                 <span>Users</span>
