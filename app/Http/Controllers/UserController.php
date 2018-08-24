@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Photo;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Zipper;
 
 class UserController extends Controller
@@ -29,7 +32,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view("admin.user.create");
     }
 
     /**
@@ -40,7 +43,46 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request);
+        // validate request
+        $request->validate([
+            'avatar' => ['image', 'nullable'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+
+        // find user
+        $user = new User;
+
+        // update values
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+
+        if ($request->is_admin) {
+            $user->is_admin = 1;
+        }
+
+        //if has avatar
+        if ($request->hasFile('avatar')) {
+            try {
+                // create new image
+                $requestImage = $request->file('avatar');
+                // save to storage
+                $filesystem = "public";
+                $image = $requestImage->store($filesystem);
+                $path = preg_replace('/^public\//', '', $image);
+                // update user avatar url
+                $user->avatar = $path;
+            } catch (Exception $e) {
+                return $e;
+            }
+        }
+
+        $user->save();
+
+        return redirect()->route('user.show', ['id' => $user->id]);
     }
 
     /**
@@ -88,7 +130,57 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //dd($request);
+        // validate request
+        $request->validate([
+            'avatar' => ['image', 'nullable'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required', 'string', 'email', 'max:255',
+                Rule::unique('users')->ignore($id),
+            ],
+            'password' => ['string', 'min:6', 'confirmed', 'nullable'],
+        ]);
+
+        // find user
+        $user = User::findOrFail($id);
+
+        // update values
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->is_admin = 0;
+
+        if ($request->is_admin) {
+            //dd($request);
+            $user->is_admin = 1;
+        }
+
+        //if has avatar
+        if ($request->hasFile('avatar')) {
+            try {
+                // delete old image
+                // create new image
+                $requestImage = $request->file('avatar');
+                // save to storage
+                $filesystem = "public";
+                $image = $requestImage->store($filesystem);
+                $path = preg_replace('/^public\//', '', $image);
+                // update user avatar url
+                $user->avatar = $path;
+            } catch (Exception $e) {
+                return $e;
+            }
+        }
+
+        // if has new password
+        if ($request->password) {
+            //dd($request->password);
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('user.show', ['id' => $user->id]);
     }
 
     /**
@@ -108,7 +200,7 @@ class UserController extends Controller
     {
         $zipper = new Zipper;
 
-        $archiveFile = "downloads/photos.zip";
+        $archiveFile = "downloads/files.zip";
 
         Zipper::make($archiveFile)->add($files)->close();
 

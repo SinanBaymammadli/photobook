@@ -4,19 +4,17 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <h3 class="m-0">Edit user</h3>
+                <h3 class="m-0">Create new user</h3>
             </div>
             <div class="card-body">
-                <form method="post" action="{{ route('user.update', ['user' => $user]) }}"
-                    aria-label="{{ __('Register') }}" autocomplete="off" enctype="multipart/form-data">
+                <form method="post" action="{{ route('user.store') }}" aria-label="{{ __('Register') }}"
+                    autocomplete="off" enctype="multipart/form-data">
                     @csrf
-                    @method("patch")
 
                     <div class="form-group row">
                         <label for="avatar" class="col-md-4 col-form-label text-md-right d-flex align-items-center justify-content-end">Avatar</label>
 
                         <div class="col-md-6 d-flex align-items-center">
-                            <img class="mr-3" width="100" height="100" src="{{ asset($user->avatar) }}" alt="">
                             <input id="avatar" type="file" class="{{ $errors->has('avatar') ? ' is-invalid' : '' }}"
                                 name="avatar">
 
@@ -33,7 +31,7 @@
 
                         <div class="col-md-6">
                             <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
-                                name="name" value="{{ $user->name }}" required autofocus>
+                                name="name" required autofocus>
 
                             @if($errors->has('name'))
                                 <span class="invalid-feedback" role="alert">
@@ -48,7 +46,7 @@
 
                         <div class="col-md-6">
                             <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}"
-                                name="email" value="{{ $user->email }}" required>
+                                name="email" required>
 
                             @if($errors->has('email'))
                                 <span class="invalid-feedback" role="alert">
@@ -64,7 +62,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <input id="password" type="password" placeholder="Leave empty to keep the same" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}"
+                            <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}"
                                 name="password">
 
                             @if($errors->has('password'))
@@ -87,7 +85,7 @@
                         <label for="role" class="col-md-4 col-form-label text-md-right">Admin</label>
 
                         <div class="col-md-6">
-                            <input id="role" type="checkbox" class="form-control" name="is_admin" {{ $user->is_admin ? 'checked' : null }}>
+                            <input id="role" type="checkbox" class="form-control" name="is_admin">
                         </div>
                     </div>
 
