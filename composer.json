@@ -16,6 +16,7 @@
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
         "mpociot/laravel-apidoc-generator": "dev-master",
+        "santigarcor/laratrust": "5.0.*",
         "tymon/jwt-auth": "1.0.*"
     },
     "require-dev": {

@@ -191,9 +191,16 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
-        return redirect()->route('user.index');
+        if (auth()->user()->can('delete-users')) {
+            $user = User::findOrFail($id);
+            $user->delete();
+            return redirect()->route('user.index');
+        }
+
+        return redirect()->route('user.index')
+            ->withErrors([
+                'permission' => trans('permission.failed'),
+            ]);
     }
 
     public function downloadFilesAsZip($files)

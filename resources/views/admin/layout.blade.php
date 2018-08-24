@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,6 +21,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
 </head>
+
 <body>
     <div class="app">
         @include('admin.partials.side-menu')
@@ -31,8 +33,15 @@
                 @yield('content')
             </main>
         </div>
+
+        @if($errors->has('permission'))
+            <div class="alert alert-danger alert-animated" role="alert">
+                <strong>{{ $errors->first('permission') }}</strong>
+            </div>
+        @endif
     </div>
 
     @yield('extra')
 </body>
+
 </html>

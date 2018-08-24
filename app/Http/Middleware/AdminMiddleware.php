@@ -21,7 +21,7 @@ class AdminMiddleware
         if (!Auth::guest()) {
             $user = auth()->user();
 
-            if ($user->is_admin) {
+            if ($user->hasRole(['superadmin', 'admin'])) {
                 return $next($request);
             } else {
                 Auth::logout();

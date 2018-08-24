@@ -1,6 +1,7 @@
 <?php
 
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Seeder;
 
 class UserTableSeeder extends Seeder
@@ -12,15 +13,9 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
-            'name' => 'User',
-            'email' => 'user@user.com',
-            'password' => bcrypt('password'),
-            'is_admin' => false,
-            'remember_token' => str_random(60),
-        ]);
-
         factory(App\User::class, 15)->create()->each(function ($u) {
+            event(new Registered($u));
+
             for ($i = 0; $i < 40; $i++) {
                 $u->photos()->save(factory(App\Photo::class)->make());
             }
