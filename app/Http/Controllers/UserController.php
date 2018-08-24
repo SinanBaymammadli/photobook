@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Photo;
+use App\Role;
 use App\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -32,7 +33,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view("admin.user.create");
+        $roles = Role::all();
+        return view("admin.user.create", ["roles" => $roles]);
     }
 
     /**
@@ -60,10 +62,6 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
 
-        if ($request->is_admin) {
-            $user->is_admin = 1;
-        }
-
         //if has avatar
         if ($request->hasFile('avatar')) {
             try {
@@ -81,6 +79,9 @@ class UserController extends Controller
         }
 
         $user->save();
+
+        // attach role after saving user
+        $user->attachRole($request->role);
 
         return redirect()->route('user.show', ['id' => $user->id]);
     }
@@ -117,8 +118,9 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
+        $roles = Role::all();
 
-        return view("admin.user.edit", ["user" => $user]);
+        return view("admin.user.edit", ["user" => $user, "roles" => $roles]);
     }
 
     /**
@@ -148,12 +150,10 @@ class UserController extends Controller
         // update values
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->is_admin = 0;
 
-        if ($request->is_admin) {
-            //dd($request);
-            $user->is_admin = 1;
-        }
+        // detach previous role attach new one
+        $user->detachRoles($user->roles);
+        $user->attachRole($request->role);
 
         //if has avatar
         if ($request->hasFile('avatar')) {

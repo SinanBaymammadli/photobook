@@ -29,7 +29,7 @@
                                 <th scope="row">{{ $user->id }}</th>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->is_admin ? 'Admin' : 'User' }}</td>
+                                <td>{{ $user->roles[0]->display_name }}</td>
                                 <td>{{ $user->photos->count() }}</td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">

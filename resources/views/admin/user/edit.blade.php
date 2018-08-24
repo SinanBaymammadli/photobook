@@ -59,6 +59,25 @@
                     </div>
 
                     <div class="form-group row">
+                        <label for="role" class="col-md-4 col-form-label text-md-right">Role</label>
+
+                        <div class="col-md-6">
+                            <select class="custom-select form-control{{ $errors->has('email') ? ' is-invalid' : '' }}"
+                                name="role">
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->id }}" {{ $role->id == $user->roles[0]->id ? "selected" : null }}>{{ $role->display_name }}</option>
+                                @endforeach
+                            </select>
+
+                            @if($errors->has('role'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('role') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
                         <label for="password" class="col-md-4 col-form-label text-md-right">
                             {{ __('Password') }}
                         </label>
@@ -80,14 +99,6 @@
 
                         <div class="col-md-6">
                             <input id="password-confirm" type="password" class="form-control" name="password_confirmation">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="role" class="col-md-4 col-form-label text-md-right">Admin</label>
-
-                        <div class="col-md-6">
-                            <input id="role" type="checkbox" class="form-control" name="is_admin" {{ $user->is_admin ? 'checked' : null }}>
                         </div>
                     </div>
 
