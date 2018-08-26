@@ -9,7 +9,7 @@ return [
             'profile' => 'r,u',
         ],
         'admin' => [
-            'users' => 'c,r,u',
+            'users' => 'r',
             'photos' => 'r',
             'profile' => 'r,u',
         ],

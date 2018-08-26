@@ -21,6 +21,13 @@ class UserController extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('read-users')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
         $users = User::with('photos')->get();
 
         return view("admin.user.index", ["users" => $users]);
@@ -33,6 +40,13 @@ class UserController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create-users')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
         $roles = Role::all();
         return view("admin.user.create", ["roles" => $roles]);
     }
@@ -45,7 +59,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request);
+        if (!auth()->user()->can('create-users')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
         // validate request
         $request->validate([
             'avatar' => ['image', 'nullable'],
@@ -94,6 +114,13 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        if (!auth()->user()->can('read-users')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
         $user = User::findOrFail($id);
         $photoDates = Photo::select("created_at")
             ->where("user_id", $id)
@@ -117,6 +144,13 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        if (!auth()->user()->can('update-users')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
         $user = User::findOrFail($id);
         $roles = Role::all();
 
@@ -132,7 +166,13 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //dd($request);
+        if (!auth()->user()->can('update-users')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
         // validate request
         $request->validate([
             'avatar' => ['image', 'nullable'],
@@ -191,16 +231,16 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        if (auth()->user()->can('delete-users')) {
-            $user = User::findOrFail($id);
-            $user->delete();
-            return redirect()->route('user.index');
+        if (!auth()->user()->can('delete-users')) {
+            return redirect()->route('user.index')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
         }
 
-        return redirect()->route('user.index')
-            ->withErrors([
-                'permission' => trans('permission.failed'),
-            ]);
+        $user = User::findOrFail($id);
+        $user->delete();
+        return redirect()->route('user.index');
     }
 
     public function downloadFilesAsZip($files)
