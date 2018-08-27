@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\PhotosUploaded;
 use App\Http\Controllers\Controller;
 use App\Photo;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -69,6 +71,8 @@ class PhotoController extends Controller
                 $photo->user_id = $user_id;
                 $photo->save();
             }
+
+            event(new PhotosUploaded(auth()->user()));
         } catch (Exception $e) {
             $success = false;
             $message = $e->getMessage();

@@ -15,6 +15,11 @@
                 <i class="far fa-user"></i>
                 <span>Users</span>
             </a>
+            <a class="side-menu-item nav-link {{ str_contains(Route::currentRouteName(), 'order') ? 'active' : null }}"
+                href="{{ route('order.index') }}">
+                <i class="far fa-user"></i>
+                <span>Orders</span>
+            </a>
         </nav>
     </aside>
 </div>

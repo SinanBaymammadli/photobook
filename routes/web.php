@@ -38,6 +38,9 @@ Route::group(["prefix" => "admin"], function () {
         Route::get('user/{id}/download', 'UserController@downloadAllPhotosAsZip')->name('photo.download');
         Route::get('user/{id}/download/{date}', 'UserController@downloadPhotosByDateAsZip')->name('photo.downloadByDate');
         Route::get('user/{id}/photos/{date}', 'UserController@showPhotosByDate')->name('photo.byDate');
+
+        // orders
+        Route::resource('order', 'OrderController');
     });
 
 });
