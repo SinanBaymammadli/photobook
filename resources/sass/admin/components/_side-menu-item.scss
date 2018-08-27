@@ -5,13 +5,11 @@
   background-color: #22a7f0;
   color: #ffffff;
   font-size: 20px;
-
   @include on-event {
     color: #ffffff;
     text-decoration: none;
   }
-
-  .far {
+  i {
     margin: 0 10px;
     width: 38px;
     text-align: center;
@@ -22,17 +20,14 @@
   color: #76838f;
   font-size: 16px;
   padding: 13px 0;
-
   @include on-event {
     color: #ffffff;
     background-color: #2a363b;
   }
-
   &.active {
     color: #ffffff;
   }
-
-  .far {
+  i {
     margin: 0 10px;
     width: 38px;
     text-align: center;

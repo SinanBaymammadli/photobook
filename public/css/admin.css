@@ -10637,7 +10637,7 @@ body {
   text-decoration: none;
 }
 
-.side-menu-logo .far {
+.side-menu-logo i {
   margin: 0 10px;
   width: 38px;
   text-align: center;
@@ -10660,7 +10660,7 @@ body {
   color: #ffffff;
 }
 
-.side-menu-item .far {
+.side-menu-item i {
   margin: 0 10px;
   width: 38px;
   text-align: center;
