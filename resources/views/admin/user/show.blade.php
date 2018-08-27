@@ -11,12 +11,18 @@
                     <div class="media-body">
                         <h5 class="card-title">{{ $user->name }}</h5>
                         <h6 class="card-subtitle mb-4 text-muted">{{ $user->email }}</h6>
-                        <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">
-                            <i class="far fa-trash-alt"></i>Delete
-                        </button>
-                        <a class="btn btn-sm btn-warning" href="{{ route('user.edit', ['id' => $user->id]) }}">
-                            <i class="far fa-edit"></i>Edit
-                        </a>
+
+                        @if(auth()->user()->can("delete-users"))
+                            <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">
+                                <i class="far fa-trash-alt"></i>Delete
+                            </button>
+                        @endif
+
+                        @if(auth()->user()->can("update-users"))
+                            <a class="btn btn-sm btn-warning" href="{{ route('user.edit', ['id' => $user->id]) }}">
+                                <i class="far fa-edit"></i>Edit
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

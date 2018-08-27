@@ -6,10 +6,12 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="m-0">Users</h4>
 
-                <a class="btn btn-success" href="{{ route('user.create') }}">
-                    <i class="fas fa-plus"></i>
-                    Add new
-                </a>
+                @if(auth()->user()->can("create-users"))
+                    <a class="btn btn-success" href="{{ route('user.create') }}">
+                        <i class="fas fa-plus"></i>
+                        Add new
+                    </a>
+                @endif
             </div>
             <div class="card-body">
                 <table class="table" id="user-table-js">
@@ -32,18 +34,26 @@
                                 <td>{{ $user->roles[0]->display_name }}</td>
                                 <td>{{ $user->photos->count() }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">
-                                        <i class="far fa-trash-alt"></i>
-                                        Delete
-                                    </button>
-                                    <a class="btn btn-sm btn-warning" href="{{ route('user.edit', ['id' => $user->id]) }}">
-                                        <i class="far fa-edit"></i>
-                                        Edit
-                                    </a>
-                                    <a class="btn btn-sm btn-info" href="{{ route('user.show', ['id' => $user->id]) }}">
-                                        <i class="far fa-eye"></i>
-                                        View
-                                    </a>
+                                    @if(auth()->user()->can("delete-users"))
+                                        <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">
+                                            <i class="far fa-trash-alt"></i>
+                                            Delete
+                                        </button>
+                                    @endif
+
+                                    @if(auth()->user()->can("update-users"))
+                                        <a class="btn btn-sm btn-warning" href="{{ route('user.edit', ['id' => $user->id]) }}">
+                                            <i class="far fa-edit"></i>
+                                            Edit
+                                        </a>
+                                    @endif
+
+                                    @if(auth()->user()->can("read-users"))
+                                        <a class="btn btn-sm btn-info" href="{{ route('user.show', ['id' => $user->id]) }}">
+                                            <i class="far fa-eye"></i>
+                                            View
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
