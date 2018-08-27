@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
+use Illuminate\Support\Carbon;
 use Lava;
 
 class HomeController extends Controller
@@ -23,22 +25,22 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $population = Lava::DataTable();
+        $orders_by_month = Order::all()->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->toDateString();
+        });
 
-        $population->addDateColumn('Year')
-            ->addNumberColumn('Number of People')
-            ->addRow(['2006', 623452])
-            ->addRow(['2007', 685034])
-            ->addRow(['2008', 716845])
-            ->addRow(['2009', 757254])
-            ->addRow(['2010', 778034])
-            ->addRow(['2011', 792353])
-            ->addRow(['2012', 839657])
-            ->addRow(['2013', 842367])
-            ->addRow(['2014', 873490]);
+        $ordersTable = Lava::DataTable();
 
-        Lava::AreaChart('Population', $population, [
-            'title' => 'Population Growth',
+        $ordersTable->addDateColumn('Year')
+            ->addNumberColumn('Number of orders')
+            ->addRow(['2018-08-26', 0]);
+
+        foreach ($orders_by_month as $month => $orders) {
+            $ordersTable->addRow([$month, $orders->count()]);
+        }
+
+        Lava::AreaChart('Orders', $ordersTable, [
+            'title' => 'Orders',
             'legend' => [
                 'position' => 'in',
             ],
