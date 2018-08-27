@@ -31,6 +31,9 @@
                             <a class="dropdown-item" href="{{ url('/') }}">
                                 Site
                             </a>
+                            <a class="dropdown-item" href="{{ route('user.show', ['id' => auth()->user()->id]) }}">
+                                Profile
+                            </a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger" href="{{ route('logout') }}" onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">

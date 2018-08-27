@@ -33,10 +33,6 @@
                 <span>
                     Photos
                 </span>
-
-                <a class="btn btn-primary" href="{{ route('photo.download', ['id' => $user->id]) }}">
-                    Download All Photos
-                </a>
             </div>
             <div class="card-body">
                 @foreach($photoDates as $photoDate)
