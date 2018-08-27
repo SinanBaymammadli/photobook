@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\PhotosUploaded;
 use App\Http\Controllers\Controller;
+use App\Order;
 use App\Photo;
 use App\User;
 use Exception;
@@ -46,10 +46,32 @@ class PhotoController extends Controller
     {
         $this->validator($request->all())->validate();
 
+        // find last order date
+        $user_id = auth()->user()->id;
+        $last_order = Order::where('user_id', $user_id)->latest()->first();
+
+        // if in same month return false
+        if ($last_order) {
+            $last_order_date = $last_order->created_at;
+            $now = Carbon::now();
+
+            if ($last_order_date->isSameMonth($now)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only one order in a month',
+                ]);
+            }
+        }
+
+        // create new order
+        $new_order = new Order;
+        $new_order->user_id = $user_id;
+        $new_order->status_id = 1;
+        $new_order->save();
+
         try {
             $filesystem = "public";
             $realPath = Storage::disk($filesystem)->getDriver()->getAdapter()->getPathPrefix();
-            $user_id = auth()->user()->id;
             $allowedImageMimeTypes = [
                 'image/jpeg',
                 'image/png',
@@ -69,10 +91,9 @@ class PhotoController extends Controller
                 $photo = new Photo;
                 $photo->url = $path;
                 $photo->user_id = $user_id;
+                $photo->order_id = $new_order->id;
                 $photo->save();
             }
-
-            event(new PhotosUploaded(auth()->user()));
         } catch (Exception $e) {
             $success = false;
             $message = $e->getMessage();

@@ -10,4 +10,9 @@ class Photo extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function order()
+    {
+        return $this->belongsTo('App\Order');
+    }
 }

@@ -16,9 +16,6 @@ class EventServiceProvider extends ServiceProvider
         'Illuminate\Auth\Events\Registered' => [
             'App\Listeners\UserRegisteredListener',
         ],
-        'App\Events\PhotosUploaded' => [
-            'App\Listeners\PhotosUploadedListener',
-        ],
     ];
 
     /**
