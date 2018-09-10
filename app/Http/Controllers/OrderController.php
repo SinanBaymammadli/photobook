@@ -49,7 +49,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with('user')->with('photos')->firstOrFail();
+        $order = Order::with('user')->with('photos')->findOrFail($id);
 
         //dd($order);
 
