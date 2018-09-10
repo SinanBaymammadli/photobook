@@ -41,6 +41,7 @@ Route::group(["prefix" => "admin"], function () {
 
         // orders
         Route::resource('order', 'OrderController');
+        Route::resource('category', 'CategoryController');
     });
 
 });
