@@ -14,7 +14,7 @@
                             <th scope="col">User name</th>
                             <th scope="col">Order created</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Photos</th>
+                            {{-- <th scope="col">Photos</th> --}}
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -38,11 +38,11 @@
                                         <span class="badge badge-success">{{ $order->status->display_name }}</span>
                                     @endif
                                 </td>
-                                <td>
+                                {{-- <td>
                                     <a class="btn btn-sm btn-primary" href="{{ route('photo.downloadByDate', ['id' => $order->user->id, 'date' => $order->created_at->toDateString()]) }}">
                                         Download Photos
                                     </a>
-                                </td>
+                                </td> --}}
                                 <td>
                                     <a class="btn btn-sm btn-warning" href="{{ route('order.edit', ['id' => $order->id]) }}">
                                         <i class="far fa-edit"></i>

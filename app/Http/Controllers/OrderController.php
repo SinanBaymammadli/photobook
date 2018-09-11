@@ -49,9 +49,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with('user')->with('photos')->findOrFail($id);
-
-        //dd($order);
+        $order = Order::with('user')->with('status')->with('items')->findOrFail($id);
 
         return view("admin.order.show", ["order" => $order]);
     }

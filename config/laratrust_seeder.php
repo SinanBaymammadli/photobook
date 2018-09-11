@@ -22,6 +22,7 @@ return [
             'photos' => 'c,r',
             'categories' => 'r',
             'products' => 'r',
+            'orders' => 'c',
         ],
     ],
     'permission_structure' => [],

@@ -23,6 +23,35 @@
             </div>
             <div class="card-body">
                 <h1>{{ $product->name }}</h1>
+                <p>{{ $product->description }}</p>
+                <p>{{ $product->details }}</p>
+
+                <table class="table" id="product-types-table-js">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Detail</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Req. photo count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($product->types as $type)
+                            <tr>
+                                <th scope="row">{{ $type->id }}</th>
+                                <td>{{ $type->name }}</td>
+                                <td>{{ $type->detail }}</td>
+                                <td>
+                                    <img width="50" src="{{ asset($type->img_url) }}">
+                                </td>
+                                <td>{{ $type->price / 100 }}</td>
+                                <td>{{ $type->photo_count }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
