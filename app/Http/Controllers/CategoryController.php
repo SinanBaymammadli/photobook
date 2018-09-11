@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Category;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -43,7 +44,14 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        if (!auth()->user()->can('create-categories')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
+        return view("admin.category.create");
     }
 
     /**
@@ -54,7 +62,32 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!auth()->user()->can('create-categories')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
+        // validate request
+        $request->validate([
+            'img' => ['required', 'image'],
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories')],
+        ]);
+
+        // upload image
+        $requestImage = $request->file('img');
+        $filesystem = "public";
+        $image = $requestImage->store($filesystem);
+        $img_path = preg_replace('/^public\//', '', $image);
+
+        // save category
+        $category = new Category;
+        $category->name = $request->name;
+        $category->img_url = $img_path;
+        $category->save();
+
+        return redirect()->route('category.show', ['id' => $category->id]);
     }
 
     /**
@@ -65,7 +98,16 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        if (!auth()->user()->can('read-categories')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
+        $category = Category::findOrFail($id);
+
+        return view("admin.category.show", ["category" => $category]);
     }
 
     /**
