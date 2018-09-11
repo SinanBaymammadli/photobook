@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Category;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
+use App\Product;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class ProductController extends Controller
 {
     /**
      * Create a new AuthController instance.
@@ -24,11 +24,12 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $category_id = $request->category_id;
+        $products = Product::where('category_id', $category_id)->get();
 
-        return CategoryResource::collection($categories);
+        return ProductResource::collection($products);
     }
 
     /**

@@ -16,8 +16,8 @@ class Order extends Model
         return $this->belongsTo('App\OrderStatus');
     }
 
-    public function photos()
+    public function items()
     {
-        return $this->hasMany('App\Photo');
+        return $this->hasMany('App\OrderItem');
     }
 }

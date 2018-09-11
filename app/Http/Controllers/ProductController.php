@@ -61,7 +61,33 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!auth()->user()->can('create-products')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
+        // validate request
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'integer', 'min:0', 'exists:categories'],
+            
+        ]);
+
+        // upload image
+        $requestImage = $request->file('img');
+        $filesystem = "public";
+        $image = $requestImage->store($filesystem);
+        $img_path = preg_replace('/^public\//', '', $image);
+
+        // save category
+        $category = new Category;
+        $category->name = $request->name;
+        $category->img_url = $img_path;
+        $category->save();
+
+        return redirect()->route('category.show', ['id' => $category->id]);
     }
 
     /**

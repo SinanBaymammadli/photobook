@@ -24,5 +24,6 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
     });
 
     Route::apiResource('photo', 'API\PhotoController');
-    Route::get('categories', 'API\CategoryController@index');
+    Route::get('category', 'API\CategoryController@index');
+    Route::get('product', 'API\ProductController@index');
 });

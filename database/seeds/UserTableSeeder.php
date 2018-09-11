@@ -1,7 +1,6 @@
 <?php
 
 use App\Order;
-use App\Photo;
 use App\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Seeder;
@@ -15,21 +14,26 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\User::class, 15)->create()->each(function ($u) {
-            event(new Registered($u));
+        factory(App\User::class, 10)->create()->each(function ($user) {
+            event(new Registered($user));
 
-            $o = Order::create([
-                'user_id' => $u->id,
-                'status_id' => 1,
-            ]);
-
-            for ($i = 0; $i < 40; $i++) {
-                Photo::create([
-                    'user_id' => $u->id,
-                    'order_id' => $o->id,
-                    "url" => "default-avatar.png",
+            for ($i = 0; $i < 2; $i++) {
+                // create order
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'status_id' => 1,
                 ]);
+
+                // create item for each order
+                for ($j = 0; $j < 2; $j++) {
+                    $order_item = $order->items()->save(factory(App\OrderItem::class)->make());
+
+                    for ($k = 0; $k < $order_item->product_type->photo_count; $k++) {
+                        $order_item->photos()->save(factory(App\OrderItemPhoto::class)->make());
+                    }
+                }
             }
+
         });
     }
 }

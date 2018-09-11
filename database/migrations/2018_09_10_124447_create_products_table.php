@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateProductsTable extends Migration
 {
@@ -17,8 +17,8 @@ class CreateProductsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('category_id');
             $table->string('name');
-            $table->unsignedInteger('price');
-            $table->string('detail');
+            $table->text('description');
+            $table->text('details');
             $table->timestamps();
         });
     }

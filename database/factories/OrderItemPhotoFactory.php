@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\Photo::class, function (Faker $faker) {
+$factory->define(App\OrderItemPhoto::class, function (Faker $faker) {
     return [
         "url" => "default-avatar.png",
     ];
