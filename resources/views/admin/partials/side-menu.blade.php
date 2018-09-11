@@ -25,6 +25,11 @@
                 <i class="fas fa-truck"></i>
                 <span>Categories</span>
             </a>
+            <a class="side-menu-item nav-link {{ str_contains(Route::currentRouteName(), 'product') ? 'active' : null }}"
+                href="{{ route('product.index') }}">
+                <i class="fas fa-truck"></i>
+                <span>Products</span>
+            </a>
         </nav>
     </aside>
 </div>
