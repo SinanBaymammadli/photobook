@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Product;
 use Illuminate\Http\Request;
 
@@ -50,7 +51,9 @@ class ProductController extends Controller
                 ]);
         }
 
-        return view("admin.product.create");
+        $categories = Category::all();
+
+        return view("admin.product.create", ["categories" => $categories]);
     }
 
     /**
@@ -72,7 +75,6 @@ class ProductController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'integer', 'min:0', 'exists:categories'],
-            
         ]);
 
         // upload image

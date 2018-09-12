@@ -60,7 +60,7 @@
                         <label for="role" class="col-md-4 col-form-label text-md-right">Role</label>
 
                         <div class="col-md-6">
-                            <select class="custom-select form-control{{ $errors->has('email') ? ' is-invalid' : '' }}"
+                            <select class="custom-select form-control{{ $errors->has('role') ? ' is-invalid' : '' }}"
                                 name="role">
                                 @foreach($roles as $role)
                                     <option value="{{ $role->id }}" {{ $role->id == 3 ? "selected" : null }}>{{ $role->display_name }}</option>
