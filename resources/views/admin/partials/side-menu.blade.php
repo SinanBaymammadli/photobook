@@ -22,12 +22,12 @@
             </a>
             <a class="side-menu-item nav-link {{ str_contains(Route::currentRouteName(), 'category') ? 'active' : null }}"
                 href="{{ route('category.index') }}">
-                <i class="fas fa-truck"></i>
+                <i class="far fa-list-alt"></i>
                 <span>Categories</span>
             </a>
             <a class="side-menu-item nav-link {{ str_contains(Route::currentRouteName(), 'product') ? 'active' : null }}"
                 href="{{ route('product.index') }}">
-                <i class="fas fa-truck"></i>
+                <i class="fas fa-book"></i>
                 <span>Products</span>
             </a>
         </nav>

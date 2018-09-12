@@ -11,15 +11,15 @@
                     @csrf
 
                     <div class="form-group row">
-                        <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                        <label for="product_name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
                         <div class="col-md-6">
-                            <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
-                                name="name" required autofocus>
+                            <input id="product_name" type="text" class="form-control{{ $errors->has('product_name') ? ' is-invalid' : '' }}"
+                                name="product_name" required autofocus value="Ramka">
 
-                            @if($errors->has('name'))
+                            @if($errors->has('product_name'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('name') }}</strong>
+                                    <strong>{{ $errors->first('product_name') }}</strong>
                                 </span>
                             @endif
                         </div>
@@ -30,7 +30,7 @@
 
                         <div class="col-md-6">
                             <textarea id="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}"
-                                name="description" required></textarea>
+                                name="description" required>Lorem</textarea>
 
                             @if($errors->has('description'))
                                 <span class="invalid-feedback" role="alert">
@@ -45,7 +45,7 @@
 
                         <div class="col-md-6">
                             <textarea id="details" class="form-control{{ $errors->has('details') ? ' is-invalid' : '' }}"
-                                name="details" required></textarea>
+                                name="details" required>Lorem</textarea>
 
                             @if($errors->has('details'))
                                 <span class="invalid-feedback" role="alert">
@@ -78,7 +78,7 @@
 
                         <div class="col-md-6 d-flex align-items-center">
                             <input id="photos" type="file" class="{{ $errors->has('photos') ? ' is-invalid' : '' }}"
-                                name="photos" multiple>
+                                name="photos[]" multiple>
 
                             @if($errors->has('photos'))
                                 <span class="invalid-feedback" role="alert">
@@ -91,7 +91,7 @@
                     <hr>
 
                     {{-- React element --}}
-                    <div id="product-types-form"></div>
+                    <div id="product-type-create-form"></div>
                     {{-- React element --}}
 
                     <div class="form-group row mb-0">

@@ -79,7 +79,7 @@ class CategoryController extends Controller
         $requestImage = $request->file('img');
         $filesystem = "public";
         $image = $requestImage->store($filesystem);
-        $img_path = preg_replace('/^public\//', '', $image);
+        $img_path = preg_replace('/^public\//', 'storage/', $image);
 
         // save category
         $category = new Category;

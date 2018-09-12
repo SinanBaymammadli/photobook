@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Order;
+use App\OrderItem;
+use App\OrderItemPhoto;
+use Exception;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -45,14 +48,21 @@ class OrderController extends Controller
                 ]);
         }
 
+        // validation array
+        $validation_array = [
+            'count' => ['required', 'array'],
+            'count.*' => ['required', 'integer', 'min:1'],
+            'product_type_id' => ['required', 'array'],
+            'product_type_id.*' => ['required', 'integer', 'min:1', 'exists:product_types,id'],
+        ];
+
+        foreach ($request->photos as $key => $value) {
+            $validation_array['photos.' . $key] = ['required', 'array'];
+            $validation_array['photos.' . $key . '.*'] = ['required', 'image'];
+        }
+
         // validate request
-        $request->validate([
-            'items' => ['required', 'array'],
-            'items.*.count' => ['required', 'number', 'min:1'],
-            'items.*.product_type_id' => ['required', 'number', 'min:1', 'exists:product_types'],
-            'items.*.photos' => ['required', 'array'],
-            'items.*.photos.*' => ['required', 'image'],
-        ]);
+        $request->validate($validation_array);
 
         // save order
         $order = new Order;
@@ -60,24 +70,24 @@ class OrderController extends Controller
         $order->status_id = 1; // default status is "active"
         $order->save();
 
-        foreach ($request->items as $item) {
-
+        for ($i = 0; $i < count($request->product_type_id); $i++) {
             // save orderItem
             $order_item = new OrderItem;
             $order_item->order_id = $order->id;
-            $order_item->count = $item->count;
-            $order_item->product_type_id = $item->product_type_id;
+            $order_item->count = $request->count[$i];
+            $order_item->product_type_id = $request->product_type_id[$i];
             $order_item->save();
 
-            // save photos
-            foreach ($item->photos as $photo) {
+            // save orderItem photos
+            foreach ($request->photos[$i] as $photo) {
                 // upload photo
                 try {
                     $filesystem = "public";
                     $image = $photo->store($filesystem);
-                    $img_path = preg_replace('/^public\//', '', $image);
+                    $img_path = preg_replace('/^public\//', 'storage/', $image);
+
                     //save photo
-                    $order_photo = new OrderPhoto;
+                    $order_photo = new OrderItemPhoto;
                     $order_photo->order_item_id = $order_item->id;
                     $order_photo->url = $img_path;
                     $order_photo->save();
