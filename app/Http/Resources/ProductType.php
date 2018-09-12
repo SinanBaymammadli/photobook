@@ -19,8 +19,8 @@ class ProductType extends JsonResource
             'name' => $this->name,
             'detail' => $this->detail,
             'price' => $this->price / 100,
-            'img_url' => asset($this->img_url),
-            'photo_count' => $this->photo_count,
+            'imgUrl' => asset($this->img_url),
+            'photoCount' => $this->photo_count,
         ];
     }
 }
