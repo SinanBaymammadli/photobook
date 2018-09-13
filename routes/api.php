@@ -27,4 +27,5 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
     Route::get('category', 'API\CategoryController@index');
     Route::get('product', 'API\ProductController@index');
     Route::post('order', 'API\OrderController@store');
+    Route::post('payment', 'API\PaymentController@store');
 });
