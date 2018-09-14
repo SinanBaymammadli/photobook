@@ -5,12 +5,14 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Laravel\Cashier\Billable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use LaratrustUserTrait;
     use Notifiable;
+    use Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -29,6 +31,8 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    protected $appends = ['is_subscribed'];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -58,5 +62,10 @@ class User extends Authenticatable implements JWTSubject
     public function orders()
     {
         return $this->hasMany('App\Order');
+    }
+
+    public function getIsSubscribedAttribute()
+    {
+        return $this->subscribed('main');
     }
 }

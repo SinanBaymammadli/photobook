@@ -28,19 +28,19 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $token = $request->token;
+        $user = auth()->user();
 
         try {
             // Create a Customer:
             $customer = Customer::create([
-                'source' => $token,
-                'email' => 'paying.user@example.com',
+                'source' => $request->token,
+                'email' => $user->email,
             ]);
 
             $charge = Charge::create([
                 'customer' => $customer->id,
-                'amount' => 999,
-                'currency' => 'usd',
+                'amount' => $request->total,
+                'currency' => 'dkk',
                 'description' => 'Example charge',
             ]);
 

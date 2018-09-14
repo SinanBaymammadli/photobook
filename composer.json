@@ -14,11 +14,11 @@
     "fideloper/proxy": "^4.0",
     "intervention/image": "^2.4",
     "khill/lavacharts": "^3.1",
+    "laravel/cashier": "^7.2",
     "laravel/framework": "5.6.*",
     "laravel/tinker": "^1.0",
     "mpociot/laravel-apidoc-generator": "dev-master",
     "santigarcor/laratrust": "5.0.*",
-    "stripe/stripe-php": "^6.17",
     "tymon/jwt-auth": "1.0.*"
   },
   "require-dev": {
