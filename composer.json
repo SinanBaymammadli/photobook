@@ -19,7 +19,8 @@
     "laravel/tinker": "^1.0",
     "mpociot/laravel-apidoc-generator": "dev-master",
     "santigarcor/laratrust": "5.0.*",
-    "tymon/jwt-auth": "1.0.*"
+    "tymon/jwt-auth": "1.0.*",
+    "nesbot/carbon": "1.29.0 as 1.25.0"
   },
   "require-dev": {
     "filp/whoops": "^2.0",

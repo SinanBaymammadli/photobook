@@ -54,11 +54,6 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function photos()
-    {
-        return $this->hasMany('App\Photo');
-    }
-
     public function orders()
     {
         return $this->hasMany('App\Order');
@@ -67,5 +62,10 @@ class User extends Authenticatable implements JWTSubject
     public function getIsSubscribedAttribute()
     {
         return $this->subscribed('main');
+    }
+
+    public function albumOrders()
+    {
+        return $this->hasMany('App\AlbumOrder');
     }
 }

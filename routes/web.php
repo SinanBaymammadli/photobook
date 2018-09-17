@@ -43,6 +43,7 @@ Route::group(["prefix" => "admin"], function () {
         Route::resource('order', 'OrderController');
         Route::resource('category', 'CategoryController');
         Route::resource('product', 'ProductController');
+        Route::resource('album-order', 'AlbumOrderController');
     });
 
 });

@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Photo;
 use App\Role;
 use App\User;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Zipper;
 
 class UserController extends Controller
 {
@@ -28,7 +25,7 @@ class UserController extends Controller
                 ]);
         }
 
-        $users = User::with('photos')->get();
+        $users = User::all();
 
         return view("admin.user.index", ["users" => $users]);
     }
@@ -122,18 +119,8 @@ class UserController extends Controller
         }
 
         $user = User::findOrFail($id);
-        $photoDates = Photo::select("created_at")
-            ->where("user_id", $id)
-            ->get()
-            ->unique(function ($photoDate) {
-                return Carbon::parse($photoDate->created_at)->format('d'); // grouping by days
-                // return Carbon::parse($date->created_at)->format('Y'); // grouping by years
-                // return Carbon::parse($date->created_at)->format('m'); // grouping by months
-            });
 
-        //dd($photoDates);
-
-        return view("admin.user.show", ["user" => $user, "photoDates" => $photoDates]);
+        return view("admin.user.show", ["user" => $user]);
     }
 
     /**
@@ -243,52 +230,52 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
-    public function downloadFilesAsZip($files)
-    {
-        $zipper = new Zipper;
+    // public function downloadFilesAsZip($files)
+    // {
+    //     $zipper = new Zipper;
 
-        $archiveFile = "downloads/files.zip";
+    //     $archiveFile = "downloads/files.zip";
 
-        Zipper::make($archiveFile)->add($files)->close();
+    //     Zipper::make($archiveFile)->add($files)->close();
 
-        return response()->download($archiveFile)->deleteFileAfterSend(true);
-    }
+    //     return response()->download($archiveFile)->deleteFileAfterSend(true);
+    // }
 
-    public function downloadAllPhotosAsZip($userId)
-    {
-        // create a list of files that should be added to the archive.
-        $photos = Photo::where("user_id", $userId)
-            ->get();
-        $photosArray = [];
+    // public function downloadAllPhotosAsZip($userId)
+    // {
+    //     // create a list of files that should be added to the archive.
+    //     $photos = Photo::where("user_id", $userId)
+    //         ->get();
+    //     $photosArray = [];
 
-        foreach ($photos as $photo) {
-            array_push($photosArray, storage_path("app/public/" . $photo->url));
-        }
+    //     foreach ($photos as $photo) {
+    //         array_push($photosArray, storage_path("app/public/" . $photo->url));
+    //     }
 
-        return $this->downloadFilesAsZip($photosArray);
-    }
+    //     return $this->downloadFilesAsZip($photosArray);
+    // }
 
-    public function downloadPhotosByDateAsZip($userId, $date)
-    {
-        $photos = Photo::where("user_id", $userId)
-            ->whereDate("created_at", $date)
-            ->get();
-        $photosArray = [];
+    // public function downloadPhotosByDateAsZip($userId, $date)
+    // {
+    //     $photos = Photo::where("user_id", $userId)
+    //         ->whereDate("created_at", $date)
+    //         ->get();
+    //     $photosArray = [];
 
-        foreach ($photos as $photo) {
-            array_push($photosArray, storage_path("app/public/" . $photo->url));
-        }
+    //     foreach ($photos as $photo) {
+    //         array_push($photosArray, storage_path("app/public/" . $photo->url));
+    //     }
 
-        return $this->downloadFilesAsZip($photosArray);
-    }
+    //     return $this->downloadFilesAsZip($photosArray);
+    // }
 
-    public function showPhotosByDate($userId, $date)
-    {
-        $user = User::findOrFail($userId);
-        $photos = Photo::where("user_id", $userId)
-            ->whereDate("created_at", $date)
-            ->get();
+    // public function showPhotosByDate($userId, $date)
+    // {
+    //     $user = User::findOrFail($userId);
+    //     $photos = Photo::where("user_id", $userId)
+    //         ->whereDate("created_at", $date)
+    //         ->get();
 
-        return view("admin.photo.bydate", ["user" => $user, "photos" => $photos, "date" => $date]);
-    }
+    //     return view("admin.photo.bydate", ["user" => $user, "photos" => $photos, "date" => $date]);
+    // }
 }

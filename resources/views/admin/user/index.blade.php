@@ -21,7 +21,6 @@
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
                             <th scope="col">Role</th>
-                            <th scope="col">Photo count</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -32,7 +31,6 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->roles[0]->display_name }}</td>
-                                <td>{{ $user->photos->count() }}</td>
                                 <td>
                                     @if(auth()->user()->can("delete-users"))
                                         <button type="button" class="btn btn-sm btn-danger" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#deleteUserModal">

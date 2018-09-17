@@ -5,10 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
-use \Stripe\Charge;
-use \Stripe\Customer;
 
-class PaymentController extends Controller
+class SubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -30,33 +28,23 @@ class PaymentController extends Controller
     {
         $request->validate([
             "token" => ["required", "string"],
-            "total" => ["required", "integer"],
         ]);
 
-        $user = auth()->user();
-
         try {
-            //Create a Customer:
-            $customer = Customer::create([
-                'source' => $request->token,
-                'email' => $user->email,
+            $token = $request->token;
+            $user = auth()->user();
+            $user->newSubscription('main', 'album')->create($token);
+            // "album" is the specific Stripe plan the user is subscribing to. This value should correspond to the plan's identifier in Stripe.
+            return response()->json([
+                "success" => true,
+                "message" => "Successfully added to monthly subscription.",
             ]);
-
-            $charge = Charge::create([
-                'customer' => $customer->id,
-                'amount' => $request->total,
-                'currency' => 'dkk',
-                'description' => 'Example charge',
-            ]);
-
-            $success = true;
-            $message = "Successful payment";
         } catch (Exception $e) {
-            $success = false;
-            $message = $e->getMessage();
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage(),
+            ]);
         }
-
-        return response()->json(compact('success', 'message'));
     }
 
     /**
@@ -88,8 +76,21 @@ class PaymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy()
     {
-        //
+        try {
+            $user = auth()->user();
+            $user->subscription('main')->cancel();
+
+            return response()->json([
+                "success" => true,
+                "message" => "Subscription canceled.",
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage(),
+            ]);
+        }
     }
 }

@@ -28,4 +28,8 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
     Route::get('product', 'API\ProductController@index');
     Route::post('order', 'API\OrderController@store');
     Route::post('payment', 'API\PaymentController@store');
+    Route::post('subscription', 'API\SubscriptionController@store');
+    Route::post('subscription/cancel', 'API\SubscriptionController@destroy');
+    Route::get('album-order', 'API\AlbumOrderController@index');
+    Route::post('album-order', 'API\AlbumOrderController@store');
 });

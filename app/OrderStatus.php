@@ -10,4 +10,9 @@ class OrderStatus extends Model
     {
         return $this->hasMany('App\Order');
     }
+
+    public function albumOrders()
+    {
+        return $this->hasMany('App\AlbumOrder');
+    }
 }

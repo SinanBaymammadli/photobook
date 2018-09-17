@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div class="card mt-4">
+        {{-- <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>
                     Photos
@@ -41,7 +41,7 @@
                     </a>
                 @endforeach
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 

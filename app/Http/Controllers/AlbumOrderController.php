@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Exception;
+use App\AlbumOrder;
 use Illuminate\Http\Request;
-use \Stripe\Charge;
-use \Stripe\Customer;
 
-class PaymentController extends Controller
+class AlbumOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,6 +13,18 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    {
+        $orders = AlbumOrder::with('user')->with('status')->orderBy('id', 'desc')->get();
+
+        return view("admin.album-order.index", ["orders" => $orders]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
         //
     }
@@ -28,35 +37,7 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            "token" => ["required", "string"],
-            "total" => ["required", "integer"],
-        ]);
-
-        $user = auth()->user();
-
-        try {
-            //Create a Customer:
-            $customer = Customer::create([
-                'source' => $request->token,
-                'email' => $user->email,
-            ]);
-
-            $charge = Charge::create([
-                'customer' => $customer->id,
-                'amount' => $request->total,
-                'currency' => 'dkk',
-                'description' => 'Example charge',
-            ]);
-
-            $success = true;
-            $message = "Successful payment";
-        } catch (Exception $e) {
-            $success = false;
-            $message = $e->getMessage();
-        }
-
-        return response()->json(compact('success', 'message'));
+        //
     }
 
     /**
@@ -66,6 +47,17 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
     {
         //
     }
