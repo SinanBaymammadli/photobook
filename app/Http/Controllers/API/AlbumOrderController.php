@@ -9,13 +9,12 @@ use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Image;
 use Storage;
 
 class AlbumOrderController extends Controller
 {
     protected $MAX_UPLOADABLE_PHOTO_COUNT = 100;
-    protected $MIN_UPLOADABLE_PHOTO_COUNT = 2;
+    protected $MIN_UPLOADABLE_PHOTO_COUNT = 1;
 
     /**
      * Create a new AuthController instance.
@@ -55,6 +54,7 @@ class AlbumOrderController extends Controller
      */
     public function store(Request $request)
     {
+        // validate
         $request->validate([
             "photos" => "required|array|max:" . $this->MAX_UPLOADABLE_PHOTO_COUNT . "|min:" . $this->MIN_UPLOADABLE_PHOTO_COUNT,
             "photos.*" => "required|image",
@@ -71,48 +71,40 @@ class AlbumOrderController extends Controller
 
             if ($last_order_date->isSameMinute($now)) {
                 return response()->json([
-                    'success' => false,
                     'message' => 'Only one order in a month',
-                ]);
+                ], 422);
             }
         }
 
         // create new order
-        $new_order = new AlbumOrder;
-        $new_order->user_id = $user->id;
-        $new_order->status_id = 1;
-        $new_order->save();
+        $album_order = new AlbumOrder;
+        $album_order->user_id = $user->id;
+        $album_order->status_id = 1;
+        $album_order->save();
 
+        // upload photos
+        $filesystem = "public";
         try {
-            $filesystem = "public";
-            $realPath = Storage::disk($filesystem)->getDriver()->getAdapter()->getPathPrefix();
-            $allowedImageMimeTypes = [
-                'image/jpeg',
-                'image/png',
-                'image/bmp',
-                'image/svg+xml',
-            ];
-            foreach ($request->file("photos") as $request_file) {
-                $file = $request_file->store("albums/" . $user->id . "/" . Carbon::now()->toDateString(), $filesystem);
-                if (in_array($request_file->getMimeType(), $allowedImageMimeTypes)) {
-                    $image = Image::make($realPath . $file);
-                    $image->orientate()->save($realPath . $file);
-                }
-                $success = true;
-                $message = "Successfully uploaded image.";
-                $path = preg_replace('/^public\//', 'storage/', $file);
+            foreach ($request->photos as $photo) {
+                // upload photo
+                $stored_photo = $photo->store($filesystem);
+                $stored_photo_url = preg_replace('/^public\//', 'storage/', $stored_photo);
+
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
-                $photo->url = $path;
-                $photo->album_order_id = $new_order->id;
+                $photo->url = $stored_photo_url;
+                $photo->album_order_id = $album_order->id;
                 $photo->save();
             }
+
+            return response()->json([
+                'message' => 'Album successfully ordered.',
+            ]);
         } catch (Exception $e) {
-            $success = false;
-            $message = $e->getMessage();
-            $path = '';
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
         }
-        return response()->json(compact('success', 'message'));
     }
 
     /**
