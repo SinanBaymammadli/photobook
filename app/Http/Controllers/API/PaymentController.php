@@ -49,14 +49,14 @@ class PaymentController extends Controller
                 'description' => 'Example charge',
             ]);
 
-            $success = true;
-            $message = "Successful payment";
+            return response()->json([
+                "message" => "Successful payment",
+            ]);
         } catch (Exception $e) {
-            $success = false;
-            $message = $e->getMessage();
+            return response()->json([
+                "message" => $e->getMessage(),
+            ], 422);
         }
-
-        return response()->json(compact('success', 'message'));
     }
 
     /**

@@ -36,14 +36,12 @@ class SubscriptionController extends Controller
             $user->newSubscription('main', 'album')->create($token);
             // "album" is the specific Stripe plan the user is subscribing to. This value should correspond to the plan's identifier in Stripe.
             return response()->json([
-                "success" => true,
                 "message" => "Successfully added to monthly subscription.",
             ]);
         } catch (Exception $e) {
             return response()->json([
-                "success" => false,
                 "message" => $e->getMessage(),
-            ]);
+            ], 422);
         }
     }
 
@@ -83,14 +81,12 @@ class SubscriptionController extends Controller
             $user->subscription('main')->cancel();
 
             return response()->json([
-                "success" => true,
                 "message" => "Subscription canceled.",
             ]);
         } catch (Exception $e) {
             return response()->json([
-                "success" => false,
                 "message" => $e->getMessage(),
-            ]);
+            ], 422);
         }
     }
 }

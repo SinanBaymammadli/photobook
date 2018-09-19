@@ -23,7 +23,7 @@ class AlbumOrderController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('api');
     }
 
     /**
@@ -41,7 +41,6 @@ class AlbumOrderController extends Controller
             ->get();
 
         return response()->json([
-            "success" => true,
             "orders" => $orders,
         ]);
     }
@@ -87,8 +86,8 @@ class AlbumOrderController extends Controller
         try {
             foreach ($request->photos as $photo) {
                 // upload photo
-                $stored_photo = $photo->store($filesystem);
-                $stored_photo_url = preg_replace('/^public\//', 'storage/', $stored_photo);
+                $stored_photo = $photo->store("albums/" . $user->id . "/" . $album_order->created_at->toDateTimeString(), $filesystem);
+                $stored_photo_url = preg_replace('/^public\//', '', $stored_photo);
 
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;

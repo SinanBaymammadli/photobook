@@ -14,7 +14,6 @@
                             <th scope="col">User name</th>
                             <th scope="col">Order created</th>
                             <th scope="col">Status</th>
-                            {{-- <th scope="col">Photos</th> --}}
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -44,11 +43,11 @@
                                     </a>
                                 </td> --}}
                                 <td>
-                                    <a class="btn btn-sm btn-warning" href="{{ route('order.edit', ['id' => $order->id]) }}">
+                                    <a class="btn btn-sm btn-warning" href="{{ route('album-order.edit', ['id' => $order->id]) }}">
                                         <i class="far fa-edit"></i>
                                         Edit
                                     </a>
-                                    <a class="btn btn-sm btn-info" href="{{ route('order.show', ['id' => $order->id]) }}">
+                                    <a class="btn btn-sm btn-info" href="{{ route('album-order.show', ['id' => $order->id]) }}">
                                         <i class="far fa-eye"></i>
                                         View
                                     </a>

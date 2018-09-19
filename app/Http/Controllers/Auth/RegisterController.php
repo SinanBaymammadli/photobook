@@ -93,8 +93,7 @@ class RegisterController extends Controller
         $this->guard()->login($user);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Registered Complete!',
-        ], 200);
+            'message' => 'Successfully registered! You can now login.',
+        ]);
     }
 }

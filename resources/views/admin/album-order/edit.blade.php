@@ -7,7 +7,7 @@
                 <h3 class="m-0">Edit order</h3>
             </div>
             <div class="card-body">
-                <form method="post" action="{{ route('order.update', ['order' => $order]) }}"
+                <form method="post" action="{{ route('album-order.update', ['order' => $order]) }}"
                     aria-label="Order Edit">
                     @csrf
                     @method("patch")

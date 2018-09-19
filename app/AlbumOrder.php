@@ -18,6 +18,6 @@ class AlbumOrder extends Model
 
     public function photos()
     {
-        return $this->hasMany('App\OrderItemPhoto');
+        return $this->hasMany('App\AlbumOrderPhoto');
     }
 }
