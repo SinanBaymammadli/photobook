@@ -33,6 +33,12 @@ class AlbumOrderController extends Controller
      */
     public function index()
     {
+        if (!auth()->user()) {
+            return response()->json([
+                "message" => "Not authenticated",
+            ], 422);
+        }
+
         $user = auth()->user();
 
         $orders = AlbumOrder::where('user_id', $user->id)
