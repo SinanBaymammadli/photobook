@@ -23,6 +23,10 @@ class CreateUsersTable extends Migration
             $table->string('card_brand')->nullable();
             $table->string('card_last_four')->nullable();
             $table->timestamp('trial_ends_at')->nullable();
+            $table->string('street')->nullable();
+            $table->unsignedInteger('city_id')->nullable();
+            $table->unsignedInteger('country_id')->nullable();
+            $table->string('zip')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

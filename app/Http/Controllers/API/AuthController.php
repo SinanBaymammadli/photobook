@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use \Stripe\Customer;
 
 /**
  * @resource Authentication
@@ -30,9 +35,9 @@ class AuthController extends Controller
      * access_token: "asdasd"
      * }
      */
-    public function login()
+    public function login(Request $request)
     {
-        $credentials = request(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json([
@@ -41,6 +46,50 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\User
+     */
+    protected function create(array $data)
+    {
+        $customerToken = Customer::create([
+            'source' => $data['stripeToken'],
+            'email' => $data['email'],
+        ]);
+
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+
+            'street' => $data['street'],
+            'country_id' => $data['country_id'],
+            'city_id' => $data['city_id'],
+            'zip' => $data['zip'],
+            'stripe_id' => $customerToken,
+        ]);
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+            'street' => 'required|string|max:255',
+            'country_id' => 'required|exists:countries,id',
+            'city_id' => 'required|exists:cities,id',
+            'zip' => 'required|string|max:255',
+            'stripeToken' => 'required|string|max:255',
+        ]);
+
+        event(new Registered($user = $this->create($request->all())));
+
+        return $this->login($request);
     }
 
     /**

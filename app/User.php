@@ -59,6 +59,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany('App\Order');
     }
 
+    public function city()
+    {
+        return $this->hasOne('App\City');
+    }
+
+    public function country()
+    {
+        return $this->hasOne('App\Country');
+    }
+
     public function getIsSubscribedAttribute()
     {
         return $this->subscribed('main');

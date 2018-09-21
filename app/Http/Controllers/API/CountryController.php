@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Country;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductResource;
-use App\Product;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class CountryController extends Controller
 {
     /**
      * Create a new AuthController instance.
@@ -24,16 +23,11 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $request->validate([
-            "category_id" => ["required", "integer"],
-        ]);
+        $countries = Country::all();
 
-        $category_id = $request->category_id;
-        $products = Product::where('category_id', $category_id)->get();
-
-        return ProductResource::collection($products);
+        return response()->json($countries);
     }
 
     /**

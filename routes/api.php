@@ -19,7 +19,7 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
         Route::post('refresh', 'API\AuthController@refresh');
         Route::post('me', 'API\AuthController@me');
         // register
-        Route::post('register', 'Auth\RegisterController@register');
+        Route::post('register', 'API\AuthController@register');
         Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
     });
 
@@ -32,4 +32,6 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
     Route::post('subscription/cancel', 'API\SubscriptionController@destroy');
     Route::get('album-order', 'API\AlbumOrderController@index');
     Route::post('album-order', 'API\AlbumOrderController@store');
+    Route::get('country', 'API\CountryController@index');
+    Route::get('city', 'API\CityController@index');
 });

@@ -19,5 +19,9 @@ $factory->define(App\User::class, function (Faker $faker) {
         'email' => $faker->unique()->safeEmail,
         'password' => bcrypt('password'),
         'remember_token' => str_random(10),
+        'country_id' => $faker->numberBetween($min = 1, $max = 5),
+        'city_id' => $faker->numberBetween($min = 1, $max = 5),
+        'street' => $faker->streetAddress(),
+        'zip' => $faker->postcode(),
     ];
 });

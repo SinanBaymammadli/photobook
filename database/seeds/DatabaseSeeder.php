@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(CountryTableSeeder::class);
         $this->call(LaratrustSeeder::class);
         $this->call(OrderStatusTableSeeder::class);
         $this->call(CategoryTableSeeder::class);

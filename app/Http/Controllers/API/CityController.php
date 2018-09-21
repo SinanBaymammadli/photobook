@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\City;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductResource;
-use App\Product;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class CityController extends Controller
 {
     /**
      * Create a new AuthController instance.
@@ -27,13 +26,12 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            "category_id" => ["required", "integer"],
+            "country_id" => ["required", "integer"],
         ]);
 
-        $category_id = $request->category_id;
-        $products = Product::where('category_id', $category_id)->get();
+        $countries = City::where("country_id", $request->country_id)->get();
 
-        return ProductResource::collection($products);
+        return response()->json($countries);
     }
 
     /**
