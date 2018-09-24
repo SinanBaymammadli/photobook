@@ -35,6 +35,11 @@
                 <i class="fas fa-book"></i>
                 <span>Products</span>
             </a>
+            <a class="side-menu-item nav-link {{ str_contains(Route::currentRouteName(), 'album') ? 'active' : null }}"
+                href="{{ route('album.index') }}">
+                <i class="fas fa-book"></i>
+                <span>Albums</span>
+            </a>
         </nav>
     </aside>
 </div>

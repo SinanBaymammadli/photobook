@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Album;
 use App\AlbumOrder;
 use App\AlbumOrderPhoto;
 use App\Http\Controllers\Controller;
@@ -13,8 +14,6 @@ use Storage;
 
 class AlbumOrderController extends Controller
 {
-    protected $MAX_UPLOADABLE_PHOTO_COUNT = 100;
-    protected $MIN_UPLOADABLE_PHOTO_COUNT = 1;
 
     /**
      * Create a new AuthController instance.
@@ -23,8 +22,10 @@ class AlbumOrderController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('api');
+        $this->middleware('auth:api');
     }
+
+    protected $filesystem = "public";
 
     /**
      * Display a listing of the resource.
@@ -43,12 +44,18 @@ class AlbumOrderController extends Controller
 
         $orders = AlbumOrder::where('user_id', $user->id)
             ->with("status")
+            ->with("photos")
             ->orderBy('id', 'desc')
             ->get();
 
-        return response()->json([
-            "orders" => $orders,
-        ]);
+        return response()->json($orders);
+    }
+
+    public function uploadPhoto($photo)
+    {
+        $stored_photo = $photo->store('albums', $this->filesystem);
+        $stored_photo_url = preg_replace('/^public\//', '', $stored_photo);
+        return $stored_photo_url;
     }
 
     /**
@@ -61,7 +68,7 @@ class AlbumOrderController extends Controller
     {
         // validate
         $request->validate([
-            "photos" => "required|array|max:" . $this->MAX_UPLOADABLE_PHOTO_COUNT . "|min:" . $this->MIN_UPLOADABLE_PHOTO_COUNT,
+            "photos" => "required|array|min:1",
             "photos.*" => "required|image",
         ]);
 
@@ -92,8 +99,7 @@ class AlbumOrderController extends Controller
         try {
             foreach ($request->photos as $photo) {
                 // upload photo
-                $stored_photo = $photo->store("albums/" . $user->id . "/" . $album_order->created_at->toDateTimeString(), $filesystem);
-                $stored_photo_url = preg_replace('/^public\//', '', $stored_photo);
+                $stored_photo_url = $this->uploadPhoto($photo);
 
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
@@ -103,24 +109,13 @@ class AlbumOrderController extends Controller
             }
 
             return response()->json([
-                'message' => 'Album successfully ordered.',
+                'message' => 'Photos added.',
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 422);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -132,7 +127,46 @@ class AlbumOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $album_order = AlbumOrder::findOrFail($id);
+
+        $album_order->ordered = 1;
+
+        $album_order->save();
+
+        return response()->json([
+            "message" => "Successfully ordered.",
+        ]);
+    }
+
+    public function addPhotos(Request $request, $id)
+    {
+        // validate
+        $request->validate([
+            "photos" => "required|array|min:1",
+            "photos.*" => "required|image",
+        ]);
+
+        // upload photos
+        try {
+            foreach ($request->photos as $photo) {
+                // upload photo
+                $stored_photo_url = $this->uploadPhoto($photo);
+
+                // save new Photo to db
+                $photo = new AlbumOrderPhoto;
+                $photo->url = $stored_photo_url;
+                $photo->album_order_id = $id;
+                $photo->save();
+            }
+
+            return response()->json([
+                'message' => 'Photos added.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 
     /**
@@ -144,5 +178,12 @@ class AlbumOrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function settings()
+    {
+        $album = Album::findOrFail(1);
+
+        return response()->json($album);
     }
 }

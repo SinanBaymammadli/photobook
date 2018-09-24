@@ -4,11 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use \Stripe\Customer;
 
 /**
  * @resource Authentication
@@ -23,7 +23,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -48,32 +48,6 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
-    protected function create(array $data)
-    {
-        $customerToken = Customer::create([
-            'source' => $data['stripeToken'],
-            'email' => $data['email'],
-        ]);
-
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-
-            'street' => $data['street'],
-            'country_id' => $data['country_id'],
-            'city_id' => $data['city_id'],
-            'zip' => $data['zip'],
-            'stripe_id' => $customerToken,
-        ]);
-    }
-
     public function register(Request $request)
     {
         $request->validate([
@@ -87,9 +61,28 @@ class AuthController extends Controller
             'stripeToken' => 'required|string|max:255',
         ]);
 
-        event(new Registered($user = $this->create($request->all())));
+        try {
+            $user = User::create([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
 
-        return $this->login($request);
+                'street' => $request['street'],
+                'country_id' => $request['country_id'],
+                'city_id' => $request['city_id'],
+                'zip' => $request['zip'],
+            ]);
+
+            event(new Registered($user));
+
+            $user->newSubscription('main', 'album')->create($request['stripeToken']);
+
+            return $this->login($request);
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage(),
+            ], 422);
+        }
     }
 
     /**
@@ -133,10 +126,15 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-        ]);
+        return response()->json(
+            array_merge(
+                [
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_in' => auth()->factory()->getTTL() * 60,
+                ],
+                auth()->user()->toArray()
+            )
+        );
     }
 }

@@ -16,6 +16,7 @@ class CreateAlbumOrdersTable extends Migration
         Schema::create('album_orders', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
+            $table->boolean('ordered')->default(0);
             $table->unsignedInteger('status_id');
             $table->timestamps();
 

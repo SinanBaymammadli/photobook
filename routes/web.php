@@ -43,6 +43,7 @@ Route::group(["prefix" => "admin"], function () {
         Route::resource('order', 'OrderController');
         Route::resource('category', 'CategoryController');
         Route::resource('product', 'ProductController');
+        Route::resource('album', 'AlbumController');
         Route::resource('album-order', 'AlbumOrderController');
         Route::get('album-order/{id}/download', 'AlbumOrderController@download')->name('album-order.download');
     });

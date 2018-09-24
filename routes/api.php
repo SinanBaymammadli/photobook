@@ -30,8 +30,9 @@ Route::group(['middleware' => 'api', 'guard' => 'api'], function () {
     Route::post('payment', 'API\PaymentController@store');
     Route::post('subscription', 'API\SubscriptionController@store');
     Route::post('subscription/cancel', 'API\SubscriptionController@destroy');
-    Route::get('album-order', 'API\AlbumOrderController@index');
-    Route::post('album-order', 'API\AlbumOrderController@store');
+    Route::apiResource('album-order', 'API\AlbumOrderController');
+    Route::post('album-order/add-photos/{album_order_id}', 'API\AlbumOrderController@addPhotos');
+    Route::get('album/settings', 'API\AlbumOrderController@settings');
     Route::get('country', 'API\CountryController@index');
     Route::get('city', 'API\CityController@index');
 });

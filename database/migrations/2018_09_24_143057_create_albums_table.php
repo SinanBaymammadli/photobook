@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAlbumOrderPhotosTable extends Migration
+class CreateAlbumsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateAlbumOrderPhotosTable extends Migration
      */
     public function up()
     {
-        Schema::create('album_order_photos', function (Blueprint $table) {
+        Schema::create('albums', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('album_order_id');
-            $table->string('url');
+            $table->string('name');
+            $table->unsignedInteger('min_photo_count');
+            $table->unsignedInteger('max_photo_count');
+            $table->unsignedInteger('monthly_price');
             $table->timestamps();
-
-            $table->foreign('album_order_id')->references('id')->on('album_orders')
-                ->onDelete('cascade');
         });
     }
 
@@ -31,6 +30,6 @@ class CreateAlbumOrderPhotosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('album_order_photos');
+        Schema::dropIfExists('albums');
     }
 }

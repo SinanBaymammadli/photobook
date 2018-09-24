@@ -9,6 +9,7 @@ return [
             'profile' => 'r,u',
             'categories' => 'c,r,u,d',
             'products' => 'c,r,u,d',
+            'albums' => 'c,r,u,d',
         ],
         'admin' => [
             'users' => 'r',
@@ -16,6 +17,7 @@ return [
             'profile' => 'r,u',
             'categories' => 'c,r,u,d',
             'products' => 'c,r,u,d',
+            'albums' => 'c,r,u,d',
         ],
         'user' => [
             'profile' => 'r,u',

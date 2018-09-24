@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Exception;
+use App\Album;
 use Illuminate\Http\Request;
-use \Stripe\Charge;
 
-class PaymentController extends Controller
+class AlbumController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,6 +13,25 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    {
+        if (!auth()->user()->can('read-albums')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
+
+        $albums = Album::all();
+
+        return view("admin.album.index", ["albums" => $albums]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
         //
     }
@@ -27,28 +44,7 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            "total" => ["required", "integer"],
-        ]);
-
-        $user = auth()->user();
-
-        try {
-            $charge = Charge::create([
-                'customer' => $user->stripe_id,
-                'amount' => $request->total,
-                'currency' => 'dkk',
-                'description' => 'Example charge',
-            ]);
-
-            return response()->json([
-                "message" => "Successful payment",
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                "message" => $e->getMessage(),
-            ], 422);
-        }
+        //
     }
 
     /**
@@ -58,6 +54,17 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
     {
         //
     }
