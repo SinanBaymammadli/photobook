@@ -72,8 +72,13 @@ class AlbumOrderController extends Controller
             "photos.*" => "required|image",
         ]);
 
-        // find last order date
         $user = auth()->user();
+
+        if (!$user->subscribed('main')) {
+            $user->newSubscription('main', 'album')->create();
+        }
+
+        // find last order date
         $last_order = AlbumOrder::where('user_id', $user->id)->latest()->first();
 
         // if in same month return false

@@ -59,6 +59,7 @@ class AuthController extends Controller
             'city_id' => 'required|exists:cities,id',
             'zip' => 'required|string|max:255',
             'stripeToken' => 'required|string|max:255',
+            'subscribe' => 'boolean',
         ]);
 
         try {
@@ -66,7 +67,6 @@ class AuthController extends Controller
                 'name' => $request['name'],
                 'email' => $request['email'],
                 'password' => Hash::make($request['password']),
-
                 'street' => $request['street'],
                 'country_id' => $request['country_id'],
                 'city_id' => $request['city_id'],
@@ -75,7 +75,20 @@ class AuthController extends Controller
 
             event(new Registered($user));
 
-            $user->newSubscription('main', 'album')->create($request['stripeToken']);
+            if ($request["subscribe"]) {
+                $user->newSubscription('main', 'album')->create($request['stripeToken']);
+            } else {
+                // Create a Customer:
+                $customer = \Stripe\Customer::create([
+                    'source' => $request["stripeToken"],
+                    'email' => $request["email"],
+                ]);
+
+                $user->stripe_id = $customer->id;
+                $user->card_brand = $customer->sources->data[0]->brand;
+                $user->card_last_four = $customer->sources->data[0]->last4;
+                $user->save();
+            }
 
             return $this->login($request);
         } catch (Exception $e) {
