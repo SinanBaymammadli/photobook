@@ -67,10 +67,10 @@ class AlbumOrderController extends Controller
     public function store(Request $request)
     {
         // validate
-        $request->validate([
-            "photos" => "required|array|min:1",
-            "photos.*" => "required|image",
-        ]);
+        // $request->validate([
+        //     "photos" => "required|array|min:1",
+        //     "photos.*" => "required|image",
+        // ]);
 
         $user = auth()->user();
 
@@ -99,19 +99,23 @@ class AlbumOrderController extends Controller
         $album_order->status_id = 1;
         $album_order->save();
 
+        return response()->json([
+            'message' => 'Photos added.',
+        ]);
+
         // upload photos
         $filesystem = "public";
         try {
-            foreach ($request->photos as $photo) {
-                // upload photo
-                $stored_photo_url = $this->uploadPhoto($photo);
+            // foreach ($request->photos as $photo) {
+            //     // upload photo
+            //     $stored_photo_url = $this->uploadPhoto($photo);
 
-                // save new Photo to db
-                $photo = new AlbumOrderPhoto;
-                $photo->url = $stored_photo_url;
-                $photo->album_order_id = $album_order->id;
-                $photo->save();
-            }
+            //     // save new Photo to db
+            //     $photo = new AlbumOrderPhoto;
+            //     $photo->url = $stored_photo_url;
+            //     $photo->album_order_id = $album_order->id;
+            //     $photo->save();
+            // }
 
             return response()->json([
                 'message' => 'Photos added.',
@@ -145,11 +149,14 @@ class AlbumOrderController extends Controller
 
     public function addPhotos(Request $request, $id)
     {
-        // validate
-        $request->validate([
-            "photos" => "required|array|min:1",
-            "photos.*" => "required|image",
+        return response()->json([
+            'message' => 'Photos added.',
         ]);
+        // validate
+        // $request->validate([
+        //     "photos" => "required|array|min:1",
+        //     "photos.*" => "required|image",
+        // ]);
 
         // upload photos
         try {
