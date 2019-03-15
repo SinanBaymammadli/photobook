@@ -48,6 +48,11 @@ class OrderController extends Controller
                 ]);
         }
 
+        return response()->json(compact('success', 'message'));
+
+        // var_dump($request);
+        // die();
+
         // validation array
         $validation_array = [
             'count' => ['required', 'array'],
@@ -56,10 +61,10 @@ class OrderController extends Controller
             'product_type_id.*' => ['required', 'integer', 'min:1', 'exists:product_types,id'],
         ];
 
-        foreach ($request->photos as $key => $value) {
-            $validation_array['photos.' . $key] = ['required', 'array'];
-            $validation_array['photos.' . $key . '.*'] = ['required', 'image'];
-        }
+        // foreach ($request->photos as $key => $value) {
+        //     $validation_array['photos.' . $key] = ['required', 'array'];
+        //     $validation_array['photos.' . $key . '.*'] = ['required', 'image'];
+        // }
 
         // validate request
         $request->validate($validation_array);
@@ -79,26 +84,26 @@ class OrderController extends Controller
             $order_item->save();
 
             // save orderItem photos
-            foreach ($request->photos[$i] as $photo) {
-                // upload photo
-                try {
-                    $filesystem = "public";
-                    $image = $photo->store($filesystem);
-                    $img_path = preg_replace('/^public\//', 'storage/', $image);
+            // foreach ($request->photos[$i] as $photo) {
+            //     // upload photo
+            //     try {
+            //         $filesystem = "public";
+            //         $image = $photo->store($filesystem);
+            //         $img_path = preg_replace('/^public\//', 'storage/', $image);
 
-                    //save photo
-                    $order_photo = new OrderItemPhoto;
-                    $order_photo->order_item_id = $order_item->id;
-                    $order_photo->url = $img_path;
-                    $order_photo->save();
+            //         //save photo
+            //         $order_photo = new OrderItemPhoto;
+            //         $order_photo->order_item_id = $order_item->id;
+            //         $order_photo->url = $img_path;
+            //         $order_photo->save();
 
-                    $success = true;
-                    $message = "Order successfully added.";
-                } catch (Exception $e) {
-                    $success = false;
-                    $message = $e->getMessage();
-                }
-            }
+            //         $success = true;
+            //         $message = "Order successfully added.";
+            //     } catch (Exception $e) {
+            //         $success = false;
+            //         $message = $e->getMessage();
+            //     }
+            // }
         }
 
         return response()->json(compact('success', 'message'));
