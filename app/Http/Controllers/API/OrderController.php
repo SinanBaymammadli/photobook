@@ -19,7 +19,7 @@ class OrderController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -40,16 +40,14 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // $user = auth()->user();
+        $user = auth()->user();
 
-        // if (!$user->can('create-orders')) {
-        //     return redirect()->route('home')
-        //         ->withErrors([
-        //             'permission' => trans('permission.failed'),
-        //         ]);
-        // }
-
-        $userId = 1;
+        if (!$user->can('create-orders')) {
+            return redirect()->route('home')
+                ->withErrors([
+                    'permission' => trans('permission.failed'),
+                ]);
+        }
 
         /**
          * Each Order contains 3 paramters
@@ -90,7 +88,7 @@ class OrderController extends Controller
 
         // save order
         $order = new Order;
-        $order->user_id = $userId;
+        $order->user_id = $user->id;
         $order->status_id = 1; // default status is "active"
         $order->save();
 
@@ -106,7 +104,7 @@ class OrderController extends Controller
             foreach ($request->photos[$i] as $photo) {
                 // upload photo
                 try {
-                    $photo_path = Storage::putFile('orders/' . $userId . $order->id, new File($photo));
+                    $photo_path = Storage::putFile('orders/' . $user->id . $order->id, new File($photo));
 
                     //save photo
                     $order_photo = new OrderItemPhoto;

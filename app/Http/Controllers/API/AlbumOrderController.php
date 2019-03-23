@@ -51,13 +51,6 @@ class AlbumOrderController extends Controller
         return response()->json($orders);
     }
 
-    public function uploadPhoto($photo)
-    {
-        $stored_photo = $photo->store('albums', $this->filesystem);
-        $stored_photo_url = preg_replace('/^public\//', '', $stored_photo);
-        return $stored_photo_url;
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -67,10 +60,10 @@ class AlbumOrderController extends Controller
     public function store(Request $request)
     {
         // validate
-        // $request->validate([
-        //     "photos" => "required|array|min:1",
-        //     "photos.*" => "required|image",
-        // ]);
+        $request->validate([
+            "photos" => "required|array|min:1",
+            "photos.*" => "required|image",
+        ]);
 
         $user = auth()->user();
 
@@ -104,18 +97,18 @@ class AlbumOrderController extends Controller
         ]);
 
         // upload photos
-        $filesystem = "public";
         try {
-            // foreach ($request->photos as $photo) {
-            //     // upload photo
-            //     $stored_photo_url = $this->uploadPhoto($photo);
+            foreach ($request->photos as $photo) {
+                // upload photo
+                // $stored_photo_url = $this->uploadPhoto($photo);
+                $photo_path = Storage::putFile('albums/' . $user->id . $album_order->id, new File($photo));
 
-            //     // save new Photo to db
-            //     $photo = new AlbumOrderPhoto;
-            //     $photo->url = $stored_photo_url;
-            //     $photo->album_order_id = $album_order->id;
-            //     $photo->save();
-            // }
+                // save new Photo to db
+                $photo = new AlbumOrderPhoto;
+                $photo->url = $photo_path;
+                $photo->album_order_id = $album_order->id;
+                $photo->save();
+            }
 
             return response()->json([
                 'message' => 'Photos added.',
@@ -147,7 +140,7 @@ class AlbumOrderController extends Controller
         ]);
     }
 
-    public function addPhotos(Request $request, $id)
+    public function addPhotos(Request $request, $album_order_id)
     {
         return response()->json([
             'message' => 'Photos added.',
@@ -162,11 +155,15 @@ class AlbumOrderController extends Controller
         try {
             foreach ($request->photos as $photo) {
                 // upload photo
-                $stored_photo_url = $this->uploadPhoto($photo);
+                $photo_path = Storage::putFile(
+                    'albums/' . auth()->user()->id . $album_order_id,
+                    new File($photo)
+                );
+                // $stored_photo_url = $this->uploadPhoto($photo);
 
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
-                $photo->url = $stored_photo_url;
+                $photo->url = $photo_path;
                 $photo->album_order_id = $id;
                 $photo->save();
             }
