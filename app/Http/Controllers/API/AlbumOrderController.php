@@ -8,9 +8,10 @@ use App\AlbumOrderPhoto;
 use App\Http\Controllers\Controller;
 use App\User;
 use Exception;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 class AlbumOrderController extends Controller
 {
@@ -24,8 +25,6 @@ class AlbumOrderController extends Controller
     {
         $this->middleware('auth:api');
     }
-
-    protected $filesystem = "public";
 
     /**
      * Display a listing of the resource.
@@ -92,10 +91,6 @@ class AlbumOrderController extends Controller
         $album_order->status_id = 1;
         $album_order->save();
 
-        return response()->json([
-            'message' => 'Photos added.',
-        ]);
-
         // upload photos
         try {
             foreach ($request->photos as $photo) {
@@ -142,14 +137,14 @@ class AlbumOrderController extends Controller
 
     public function addPhotos(Request $request, $album_order_id)
     {
-        return response()->json([
-            'message' => 'Photos added.',
-        ]);
-        // validate
-        // $request->validate([
-        //     "photos" => "required|array|min:1",
-        //     "photos.*" => "required|image",
+        // return response()->json([
+        //     'message' => 'Photos added.',
         // ]);
+        // validate
+        $request->validate([
+            "photos" => "required|array|min:1",
+            "photos.*" => "required|image",
+        ]);
 
         // upload photos
         try {
