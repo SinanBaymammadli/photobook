@@ -159,7 +159,7 @@ class AlbumOrderController extends Controller
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
                 $photo->url = $photo_path;
-                $photo->album_order_id = $id;
+                $photo->album_order_id = $album_order_id;
                 $photo->save();
             }
 
