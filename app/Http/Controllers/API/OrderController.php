@@ -5,9 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Order;
 use App\OrderItem;
-use App\OrderItemPhoto;
-use Exception;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -48,10 +48,23 @@ class OrderController extends Controller
                 ]);
         }
 
-        return response()->json(compact('success', 'message'));
-
-        // var_dump($request);
-        // die();
+        /**
+         * Each Order contains 3 paramters
+         *
+         * product_type_id => [1, 2, 3]
+         *
+         * count => [2, 5, 9]
+         *
+         * photos = [
+         *  ['photo_url', 'photo_url'],
+         *  ['photo_url', 'photo_url'],
+         *  ['photo_url', 'photo_url'],
+         * ]
+         *
+         * First index in each parameter array represents first OrderItem,
+         * second index second OrderItem and so on.
+         *
+         */
 
         // validation array
         $validation_array = [
@@ -59,12 +72,15 @@ class OrderController extends Controller
             'count.*' => ['required', 'integer', 'min:1'],
             'product_type_id' => ['required', 'array'],
             'product_type_id.*' => ['required', 'integer', 'min:1', 'exists:product_types,id'],
+            'photos' => ['required', 'array'],
         ];
 
-        // foreach ($request->photos as $key => $value) {
-        //     $validation_array['photos.' . $key] = ['required', 'array'];
-        //     $validation_array['photos.' . $key . '.*'] = ['required', 'image'];
-        // }
+        if ($request->photos) {
+            foreach ($request->photos as $key => $value) {
+                $validation_array['photos.' . $key] = ['required', 'array'];
+                $validation_array['photos.' . $key . '.*'] = ['required', 'image'];
+            }
+        }
 
         // validate request
         $request->validate($validation_array);
@@ -84,26 +100,24 @@ class OrderController extends Controller
             $order_item->save();
 
             // save orderItem photos
-            // foreach ($request->photos[$i] as $photo) {
-            //     // upload photo
-            //     try {
-            //         $filesystem = "public";
-            //         $image = $photo->store($filesystem);
-            //         $img_path = preg_replace('/^public\//', 'storage/', $image);
+            foreach ($request->photos[$i] as $photo) {
+                // upload photo
+                try {
+                    $photo_path = Storage::putFile('orders/' . $user->id . $order->id, new File($photo));
 
-            //         //save photo
-            //         $order_photo = new OrderItemPhoto;
-            //         $order_photo->order_item_id = $order_item->id;
-            //         $order_photo->url = $img_path;
-            //         $order_photo->save();
+                    //save photo
+                    $order_photo = new OrderItemPhoto;
+                    $order_photo->order_item_id = $order_item->id;
+                    $order_photo->url = $photo_path;
+                    $order_photo->save();
 
-            //         $success = true;
-            //         $message = "Order successfully added.";
-            //     } catch (Exception $e) {
-            //         $success = false;
-            //         $message = $e->getMessage();
-            //     }
-            // }
+                    $success = true;
+                    $message = "Order successfully added.";
+                } catch (Exception $e) {
+                    $success = false;
+                    $message = $e->getMessage();
+                }
+            }
         }
 
         return response()->json(compact('success', 'message'));
