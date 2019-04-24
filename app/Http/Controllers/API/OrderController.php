@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use App\OrderItem;
 use App\OrderItemPhoto;
+use App\ProductType;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -92,18 +93,25 @@ class OrderController extends Controller
         $order->status_id = 1; // default status is "active"
         $order->save();
 
-        for ($i = 0; $i < count($request->product_type_id); $i++) {
-            // save orderItem
-            $order_item = new OrderItem;
-            $order_item->order_id = $order->id;
-            $order_item->count = $request->count[$i];
-            $order_item->product_type_id = $request->product_type_id[$i];
-            $order_item->save();
+        $totalAmount = 0;
 
-            // save orderItem photos
-            foreach ($request->photos[$i] as $photo) {
-                // upload photo
-                try {
+        try {
+            for ($i = 0; $i < count($request->product_type_id); $i++) {
+                // save orderItem
+                $order_item = new OrderItem;
+                $order_item->order_id = $order->id;
+                $order_item->count = $request->count[$i];
+                $order_item->product_type_id = $request->product_type_id[$i];
+                $order_item->save();
+
+                // cacl totalAmount
+                $productType = ProductType::find($request->product_type_id[$i]);
+                $totalAmount += $productType->price * $request->count[$i];
+
+                // save orderItem photos
+                foreach ($request->photos[$i] as $photo) {
+                    // upload photo
+
                     $photo_path = Storage::putFile('orders/' . $user->id . $order->id, new File($photo));
 
                     //save photo
@@ -114,11 +122,15 @@ class OrderController extends Controller
 
                     $success = true;
                     $message = "Order successfully added.";
-                } catch (Exception $e) {
-                    $success = false;
-                    $message = $e->getMessage();
+
                 }
             }
+
+            // TODO: Make payment
+            $user->charge($totalAmount); //kr cent
+        } catch (Exception $e) {
+            $success = false;
+            $message = $e->getMessage();
         }
 
         return response()->json(compact('success', 'message'));

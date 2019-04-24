@@ -66,10 +66,6 @@ class AlbumOrderController extends Controller
 
         $user = auth()->user();
 
-        if (!$user->subscribed('main')) {
-            $user->newSubscription('main', 'album')->create();
-        }
-
         // find last order date
         $last_order = AlbumOrder::where('user_id', $user->id)->latest()->first();
 
@@ -78,7 +74,7 @@ class AlbumOrderController extends Controller
             $last_order_date = $last_order->created_at;
             $now = Carbon::now();
 
-            if ($last_order_date->isSameMinute($now)) {
+            if ($last_order_date->isSameMinute($now)) { // TODO: change to isSameMonth
                 return response()->json([
                     'message' => 'Only one order in a month',
                 ], 422);
@@ -105,8 +101,12 @@ class AlbumOrderController extends Controller
                 $photo->save();
             }
 
+            if (!$user->subscribed('main')) {
+                $user->newSubscription('prod_EwgNCzK1rTKFRP', 'plan_EwgPp6KtN2zfcW')->create();
+            }
+
             return response()->json([
-                'message' => 'Photos added.',
+                'message' => 'Album created',
             ]);
         } catch (Exception $e) {
             return response()->json([

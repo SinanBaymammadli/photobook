@@ -59,7 +59,7 @@ class AuthController extends Controller
             'city_id' => 'required|exists:cities,id',
             'zip' => 'required|string|max:255',
             'stripeToken' => 'required|string|max:255',
-            'subscribe' => 'boolean',
+            //'subscribe' => 'boolean',
         ]);
 
         try {
@@ -75,20 +75,27 @@ class AuthController extends Controller
 
             event(new Registered($user));
 
-            if ($request["subscribe"]) {
-                $user->newSubscription('main', 'album')->create($request['stripeToken']);
-            } else {
-                // Create a Customer:
-                $customer = \Stripe\Customer::create([
-                    'source' => $request["stripeToken"],
-                    'email' => $request["email"],
-                ]);
+            // $customer = $user->createAsStripeCustomer();
+            // $user->updateCard($request['stripeToken']);
+            // $user->updateCardFromStripe();
 
-                $user->stripe_id = $customer->id;
-                $user->card_brand = $customer->sources->data[0]->brand;
-                $user->card_last_four = $customer->sources->data[0]->last4;
-                $user->save();
-            }
+            // if ($request["subscribe"]) {
+            //     $user->newSubscription('main', 'album')->create($request['stripeToken']);
+            // } else {
+            // Create a Customer:
+            $customer = \Stripe\Customer::create([
+                'source' => $request["stripeToken"],
+                'email' => $request["email"],
+            ]);
+
+            $user->stripe_id = $customer->id;
+            // $user->card_brand = $customer->sources->data[0]->brand;
+            // $user->card_last_four = $customer->sources->data[0]->last4;
+            // $user->updateCardFromStripe();
+            $user->save();
+            //}
+
+            //return $customer;
 
             return $this->login($request);
         } catch (Exception $e) {

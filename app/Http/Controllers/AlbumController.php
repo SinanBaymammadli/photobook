@@ -34,6 +34,7 @@ class AlbumController extends Controller
     public function create()
     {
         //
+        // TODO add to Stripe billing products too
     }
 
     /**
