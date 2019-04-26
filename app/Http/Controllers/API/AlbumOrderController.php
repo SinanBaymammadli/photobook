@@ -6,6 +6,8 @@ use App\Album;
 use App\AlbumOrder;
 use App\AlbumOrderPhoto;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AlbumOrderCollectionResource;
+use App\Http\Resources\AlbumOrderResource;
 use App\User;
 use Exception;
 use Illuminate\Http\File;
@@ -23,7 +25,7 @@ class AlbumOrderController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
+//        $this->middleware('auth:api');
     }
 
     /**
@@ -33,21 +35,27 @@ class AlbumOrderController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()) {
-            return response()->json([
-                "message" => "Not authenticated",
-            ], 422);
-        }
+//        if (!auth()->user()) {
+//            return response()->json([
+//                "message" => "Not authenticated",
+//            ], 422);
+//        }
 
-        $user = auth()->user();
+//        $user = auth()->user();
 
-        $orders = AlbumOrder::where('user_id', $user->id)
+        $orders = AlbumOrder::where('user_id', 14)
             ->with("status")
             ->with("photos")
             ->orderBy('id', 'desc')
             ->get();
 
-        return response()->json($orders);
+        $album = Album::findOrFail(1);
+
+        return response()->json([
+            'albums' => new AlbumOrderCollectionResource($orders),
+            'max_photo_count' => $album->max_photo_count,
+            'min_photo_count' => $album->min_photo_count,
+        ]);
     }
 
     /**
@@ -83,6 +91,20 @@ class AlbumOrderController extends Controller
             }
         }
 
+        // check if photo count exceeds
+        $album = Album::findOrFail(1);
+        $total_photo_count= 0;
+
+        foreach ($request->count as $count) {
+            $total_photo_count += $count;
+        }
+
+        if($total_photo_count > $album->max_photo_count) {
+            return response()->json([
+                'message' => 'Too much photo',
+            ], 422);
+        }
+
         // create new order
         $album_order = new AlbumOrder;
         $album_order->user_id = $user->id;
@@ -92,12 +114,12 @@ class AlbumOrderController extends Controller
         // upload photos
         try {
             for ($i = 0; $i < count($request->photos); $i++) {
-                $photo_path = Storage::putFile('albums/' . $user->id . '/' . $album_order->id, new File($request->photos[i]));
+                $photo_path = Storage::putFile('albums/' . $user->id . '/' . $album_order->id, new File($request->photos[$i]));
 
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
                 $photo->url = $photo_path;
-                $photo->count = $request->count[i];
+                $photo->count = $request->count[$i];
                 $photo->album_order_id = $album_order->id;
                 $photo->save();
             }
@@ -145,6 +167,29 @@ class AlbumOrderController extends Controller
             'count' => ['required', 'array'],
             'count.*' => ['required', 'integer', 'min:1'],
         ]);
+
+        // check if photo count exceeds
+        $album = Album::findOrFail(1);
+        $uploaded_photos = AlbumOrderPhoto::where('album_order_id', $album_order_id)->get();
+        $uploaded_photo_count = $uploaded_photos->reduce(function ($carry, $item) {
+            return $carry + $item->count;
+        }, 0);
+
+        $total_photo_count= 0;
+
+        foreach ($request->count as $count) {
+            $total_photo_count += $count;
+        }
+
+//        $total_photo_count = $request->count->reduce(function ($carry, $item) {
+//            return $carry + $item;
+//        }, 0);
+
+        if($total_photo_count > $album->max_photo_count - $uploaded_photo_count) {
+            return response()->json([
+                'message' => 'Too much photo',
+            ], 422);
+        }
 
         // upload photos
         try {

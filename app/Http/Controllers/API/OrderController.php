@@ -7,8 +7,8 @@ use App\Order;
 use App\OrderItem;
 use App\OrderItemPhoto;
 use App\ProductType;
-use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
@@ -75,12 +75,15 @@ class OrderController extends Controller
             'product_type_id' => ['required', 'array'],
             'product_type_id.*' => ['required', 'integer', 'min:1', 'exists:product_types,id'],
             'photos' => ['required', 'array'],
+            'photo_counts' => ['required', 'array'],
         ];
 
         if ($request->photos) {
             foreach ($request->photos as $key => $value) {
                 $validation_array['photos.' . $key] = ['required', 'array'];
                 $validation_array['photos.' . $key . '.*'] = ['required', 'image'];
+                $validation_array['photo_counts.' . $key] = ['required', 'array'];
+                $validation_array['photo_counts.' . $key . '.*'] = ['required', 'integer', 'min:1'];
             }
         }
 
@@ -109,21 +112,24 @@ class OrderController extends Controller
                 $totalAmount += $productType->price * $request->count[$i];
 
                 // save orderItem photos
-                foreach ($request->photos[$i] as $photo) {
-                    // upload photo
+                for ($j = 0; $j < count($request->photos[$i]); $j++) {
+                    $photo = $request->photos[$i][$j];
+                    $count = $request->photo_counts[$i][$j];
 
+                    // upload photo
                     $photo_path = Storage::putFile('orders/' . $user->id . $order->id, new File($photo));
 
                     //save photo
                     $order_photo = new OrderItemPhoto;
                     $order_photo->order_item_id = $order_item->id;
                     $order_photo->url = $photo_path;
+                    $order_photo->count = $count;
                     $order_photo->save();
 
                     $success = true;
                     $message = "Order successfully added.";
-
                 }
+
             }
 
             // TODO: Make payment
