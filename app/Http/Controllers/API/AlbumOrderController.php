@@ -62,6 +62,8 @@ class AlbumOrderController extends Controller
         $request->validate([
             "photos" => "required|array|min:1",
             "photos.*" => "required|image",
+            'count' => ['required', 'array'],
+            'count.*' => ['required', 'integer', 'min:1'],
         ]);
 
         $user = auth()->user();
@@ -89,14 +91,13 @@ class AlbumOrderController extends Controller
 
         // upload photos
         try {
-            foreach ($request->photos as $photo) {
-                // upload photo
-                // $stored_photo_url = $this->uploadPhoto($photo);
-                $photo_path = Storage::putFile('albums/' . $user->id . $album_order->id, new File($photo));
+            for ($i = 0; $i < count($request->photos); $i++) {
+                $photo_path = Storage::putFile('albums/' . $user->id . '/' . $album_order->id, new File($request->photos[i]));
 
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
                 $photo->url = $photo_path;
+                $photo->count = $request->count[i];
                 $photo->album_order_id = $album_order->id;
                 $photo->save();
             }
@@ -137,28 +138,23 @@ class AlbumOrderController extends Controller
 
     public function addPhotos(Request $request, $album_order_id)
     {
-        // return response()->json([
-        //     'message' => 'Photos added.',
-        // ]);
         // validate
         $request->validate([
             "photos" => "required|array|min:1",
             "photos.*" => "required|image",
+            'count' => ['required', 'array'],
+            'count.*' => ['required', 'integer', 'min:1'],
         ]);
 
         // upload photos
         try {
-            foreach ($request->photos as $photo) {
-                // upload photo
-                $photo_path = Storage::putFile(
-                    'albums/' . auth()->user()->id . $album_order_id,
-                    new File($photo)
-                );
-                // $stored_photo_url = $this->uploadPhoto($photo);
+            for ($i = 0; $i < count($request->photos); $i++) {
+                $photo_path = Storage::putFile('albums/' . auth()->user()->id . '/' . $album_order_id, new File($request->photos[$i]));
 
                 // save new Photo to db
                 $photo = new AlbumOrderPhoto;
                 $photo->url = $photo_path;
+                $photo->count = $request->count[$i];
                 $photo->album_order_id = $album_order_id;
                 $photo->save();
             }
